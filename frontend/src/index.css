@@ -1,0 +1,5 @@
+/* Base reset - App.css handles everything */
+body {
+  margin: 0;
+  min-width: 320px;
+}
