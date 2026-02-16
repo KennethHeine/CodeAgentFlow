@@ -60,22 +60,17 @@ function onError(element, error) {
 
 async function loadRuntimeState(owner, repo) {
   const pulls = await ghJson(`/repos/${owner}/${repo}/pulls?state=all&per_page=100`);
+  const repoDetails = await ghJson(`/repos/${owner}/${repo}`);
 
-  const checkRunsByPr = await Promise.all(
-    pulls.map(async (pr) => {
-      const checks = await ghJson(`/repos/${owner}/${repo}/commits/${pr.head.sha}/check-runs?per_page=100`);
-      return checks.total_count || 0;
-    })
-  );
-
-  const [issues, labels, comments] = await Promise.all([
+  const [issues, labels, comments, checks] = await Promise.all([
     ghJson(`/repos/${owner}/${repo}/issues?state=all&per_page=100`),
     ghJson(`/repos/${owner}/${repo}/labels?per_page=100`),
-    ghJson(`/repos/${owner}/${repo}/issues/comments?per_page=100`)
+    ghJson(`/repos/${owner}/${repo}/issues/comments?per_page=100`),
+    ghJson(`/repos/${owner}/${repo}/commits/${repoDetails.default_branch}/check-runs?per_page=100`)
   ]);
 
   const mergedPrs = pulls.filter((pr) => Boolean(pr.merged_at)).length;
-  const totalChecks = checkRunsByPr.reduce((sum, count) => sum + count, 0);
+  const totalChecks = checks.total_count || checks.check_runs?.length || 0;
 
   return {
     issues: issues.filter((issue) => !issue.pull_request).length,

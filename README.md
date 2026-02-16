@@ -14,4 +14,4 @@ CodeAgentFlow v1 is a lightweight, GitHub-native intent-to-PR orchestration UI.
 
 ## Run
 
-Open `/home/runner/work/CideAgentFlow/CideAgentFlow/index.html` in a browser, or serve this folder with any static file server.
+Open `index.html` in a browser, or serve this folder with any static file server.
