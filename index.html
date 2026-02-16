@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeAgentFlow</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar">
+        <h1>CodeAgentFlow</h1>
+        <nav>
+          <button data-nav="goal" class="nav-btn active">Goal</button>
+          <button data-nav="requirements" class="nav-btn">Requirements</button>
+          <button data-nav="plan" class="nav-btn">Plan</button>
+          <button data-nav="tasks" class="nav-btn">Tasks</button>
+        </nav>
+        <div id="github-links"></div>
+      </aside>
+      <main>
+        <section class="panel">
+          <h2>GitHub Source of Truth</h2>
+          <div class="grid">
+            <label>Owner <input id="owner" data-testid="owner" placeholder="username-or-org" /></label>
+            <label>Repo <input id="repo" data-testid="repo" placeholder="epics-repo" /></label>
+            <label>Branch <input id="branch" data-testid="branch" value="main" /></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Create Epic</h2>
+          <label>Epic name <input id="epic-name" data-testid="epic-name" placeholder="CodeAgentFlow Frontend" /></label>
+          <div class="actions">
+            <button id="create-epic" data-testid="create-epic">Create Epic</button>
+            <button id="generate-plan" data-testid="generate-plan">Generate Plan</button>
+            <button id="write-files" data-testid="write-files">Write Files to GitHub</button>
+          </div>
+          <p id="status" data-testid="status"></p>
+        </section>
+
+        <section class="panel">
+          <h2 id="editor-title">Goal</h2>
+          <textarea id="editor" data-testid="editor" rows="14"></textarea>
+        </section>
+      </main>
+    </div>
+
+    <div id="pat-modal" class="modal" role="dialog" aria-modal="true" data-testid="pat-modal">
+      <div class="modal-content">
+        <h2>GitHub Personal Access Token Required</h2>
+        <p>
+          Enter a GitHub PAT with at least <code>repo</code> scope. The token is stored locally in your browser only.
+        </p>
+        <input id="pat-input" data-testid="pat-input" type="password" placeholder="ghp_..." />
+        <div class="actions">
+          <button id="save-pat" data-testid="save-pat">Save Token</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "cideagentflow",
+  "version": "1.0.0",
+  "description": "CodeAgentFlow frontend",
+  "scripts": {
+    "test": "node --test tests/unit/*.test.js",
+    "test:e2e": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KennethHeine/CideAgentFlow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/KennethHeine/CideAgentFlow/issues"
+  },
+  "homepage": "https://github.com/KennethHeine/CideAgentFlow#readme",
+  "devDependencies": {
+    "@playwright/test": "1.58.2"
+  }
+}

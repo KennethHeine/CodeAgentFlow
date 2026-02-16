@@ -1,0 +1,104 @@
+:root {
+  font-family: Inter, Segoe UI, system-ui, sans-serif;
+  color: #e6edf3;
+  background: #0d1117;
+}
+
+body {
+  margin: 0;
+  background: #0d1117;
+}
+
+#app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: #161b22;
+  padding: 1rem;
+  border-right: 1px solid #30363d;
+}
+
+.nav-btn {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background: #21262d;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.nav-btn.active,
+button:hover {
+  border-color: #58a6ff;
+}
+
+main {
+  padding: 1rem;
+}
+
+.panel {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+input,
+textarea,
+button {
+  background: #0d1117;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+#github-links a {
+  color: #58a6ff;
+  display: block;
+  margin-top: 0.4rem;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(0 0 0 / 65%);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  width: min(560px, 90vw);
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 1rem;
+}
