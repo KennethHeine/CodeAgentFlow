@@ -1,92 +1,50 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import type { Task, ValidationRun, AuditLog, TaskState } from '@/lib/types';
-import { getStateColor, getValidTransitions } from '@/lib/state-machine';
-
-interface TaskDetail extends Task {
-  validationRuns: ValidationRun[];
-  auditLogs: AuditLog[];
-}
+import type { TaskState } from '@/lib/types';
+import { getStateColor, getValidTransitions, canTransition } from '@/lib/state-machine';
+import { useTaskDetail, updateTaskState, createValidationRun } from '@/lib/use-store';
 
 export default function TaskDetailPage() {
   const params = useParams();
   const epicId = params.id as string;
   const taskId = params.taskId as string;
 
-  const [task, setTask] = useState<TaskDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { task, validationRuns, auditLogs } = useTaskDetail(taskId);
   const [actionLoading, setActionLoading] = useState(false);
 
-  const fetchTask = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/tasks/${taskId}`);
-      if (!res.ok) throw new Error('Task not found');
-      const data = await res.json();
-      setTask(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load task');
-    } finally {
-      setLoading(false);
-    }
-  }, [taskId]);
-
-  useEffect(() => {
-    fetchTask();
-  }, [fetchTask]);
-
-  const handleTransition = async (targetState: TaskState, extra?: Record<string, string>) => {
+  const handleTransition = (targetState: TaskState, extra?: Record<string, string>) => {
+    if (!task) return;
     setActionLoading(true);
-    try {
-      const res = await fetch(`/api/tasks/${taskId}/transition`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetState, ...extra }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        alert(data.error || 'Transition failed');
-      }
-      await fetchTask();
-    } finally {
+
+    if (!canTransition(task.state, targetState)) {
+      alert(`Invalid transition: ${task.state} → ${targetState}`);
       setActionLoading(false);
+      return;
     }
+
+    if (targetState === 'BLOCKED' && !extra?.blockedReason) {
+      alert('blockedReason is required when transitioning to BLOCKED');
+      setActionLoading(false);
+      return;
+    }
+
+    updateTaskState(taskId, targetState, extra);
+    setActionLoading(false);
   };
 
-  const handleCreateValidation = async () => {
+  const handleCreateValidation = () => {
     setActionLoading(true);
-    try {
-      const res = await fetch(`/api/tasks/${taskId}/validate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'create' }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        alert(data.error || 'Failed to create validation run');
-      }
-      await fetchTask();
-    } finally {
-      setActionLoading(false);
-    }
+    createValidationRun(taskId);
+    setActionLoading(false);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error || !task) {
+  if (!task) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-        {error || 'Task not found'}
+        Task not found
       </div>
     );
   }
@@ -223,13 +181,13 @@ export default function TaskDetailPage() {
       {/* Validation Runs */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
         <h2 className="text-sm font-semibold text-gray-700 mb-3">
-          Validation Runs ({task.validationRuns.length})
+          Validation Runs ({validationRuns.length})
         </h2>
-        {task.validationRuns.length === 0 ? (
+        {validationRuns.length === 0 ? (
           <p className="text-gray-500 text-sm">No validation runs yet.</p>
         ) : (
           <div className="space-y-2">
-            {task.validationRuns.map(run => (
+            {validationRuns.map(run => (
               <div key={run.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <span className={`px-2 py-0.5 rounded text-xs font-medium ${
@@ -258,11 +216,11 @@ export default function TaskDetailPage() {
       {/* Audit History */}
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <h2 className="text-sm font-semibold text-gray-700 mb-3">History</h2>
-        {task.auditLogs.length === 0 ? (
+        {auditLogs.length === 0 ? (
           <p className="text-gray-500 text-sm">No history yet.</p>
         ) : (
           <div className="space-y-2 max-h-60 overflow-y-auto">
-            {task.auditLogs.map(log => (
+            {auditLogs.map(log => (
               <div key={log.id} className="flex items-center gap-3 text-sm">
                 <span className="text-gray-400 text-xs font-mono whitespace-nowrap">
                   {new Date(log.createdAt).toLocaleString()}

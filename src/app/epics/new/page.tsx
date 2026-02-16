@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createEpic, generatePlan, createTask } from '@/lib/use-store';
 
 export default function CreateEpicPage() {
   const router = useRouter();
@@ -25,18 +26,27 @@ export default function CreateEpicPage() {
     setError(null);
 
     try {
-      const res = await fetch('/api/epics', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to create epic');
+      if (!form.title || !form.intent || !form.repo) {
+        throw new Error('Title, intent, and repo are required');
       }
 
-      const epic = await res.json();
+      const epic = createEpic({
+        title: form.title,
+        intent: form.intent,
+        repo: form.repo,
+        defaultBranch: form.defaultBranch || 'main',
+        constraints: form.constraints || '',
+        validationProfile: form.validationProfile || 'tests,lint',
+        mergePolicy: form.mergePolicy || 'manual',
+      });
+
+      if (form.generateTasks) {
+        const plan = generatePlan(form.intent);
+        for (const taskInput of plan) {
+          createTask({ ...taskInput, epicId: epic.id });
+        }
+      }
+
       router.push(`/epics/${epic.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');

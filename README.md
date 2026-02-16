@@ -16,10 +16,10 @@ CodeAgentFlow lets you provide a high-level intent, generates a plan of small PR
 
 ## Tech Stack
 
-- **Frontend & Backend:** Next.js 16 (App Router) with TypeScript
+- **Frontend:** Next.js 16 (App Router) with TypeScript
 - **Styling:** Tailwind CSS 4
-- **Database:** SQLite via better-sqlite3
-- **State Management:** Client-side with fetch + React state
+- **Storage:** Browser localStorage (client-side persistence)
+- **State Management:** React hooks with `useSyncExternalStore`
 
 ## Local Setup
 
@@ -53,7 +53,7 @@ npm start
 
 ### Configuration
 
-The SQLite database (`codeagentflow.db`) is created automatically in the project root on first API call. It's excluded from version control via `.gitignore`.
+All data is stored in the browser's localStorage. No server-side database is needed — data persists across page reloads in the same browser.
 
 #### Environment Variables (optional)
 
@@ -73,23 +73,16 @@ GITHUB_APP_ID=your_app_id
 | **ValidationRun** | id, taskId, status, checks[], logsUrl |
 | **AuditLog** | id, epicId, taskId, action, actor, details |
 
-## API Endpoints
+## Storage
 
-| Method | Path | Description |
-|---|---|---|
-| GET | `/api/epics` | List all epics |
-| POST | `/api/epics` | Create epic (with optional plan generation) |
-| GET | `/api/epics/:id` | Get epic with tasks and audit logs |
-| PATCH | `/api/epics/:id` | Update epic (title, intent, status) |
-| DELETE | `/api/epics/:id` | Delete epic and all related data |
-| POST | `/api/epics/:id` | Generate plan for existing epic |
-| GET | `/api/tasks?epicId=` | List tasks for an epic |
-| POST | `/api/tasks` | Create a task |
-| GET | `/api/tasks/:id` | Get task with validation runs and audit logs |
-| DELETE | `/api/tasks/:id` | Delete a task |
-| POST | `/api/tasks/:id/transition` | Transition task state |
-| POST | `/api/tasks/:id/validate` | Create or update validation run |
-| GET | `/api/audit-logs` | List audit logs (filterable) |
+All data is persisted in browser localStorage under the following keys:
+
+| Key | Contents |
+|---|---|
+| `codeagentflow_epics` | Array of Epic objects |
+| `codeagentflow_tasks` | Array of Task objects |
+| `codeagentflow_validation_runs` | Array of ValidationRun objects |
+| `codeagentflow_audit_logs` | Array of AuditLog objects |
 
 ## Task State Machine
 

@@ -1,37 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import type { Epic } from '@/lib/types';
 import { getEpicStatusColor } from '@/lib/state-machine';
+import { useEpics } from '@/lib/use-store';
 
 export default function Dashboard() {
-  const [epics, setEpics] = useState<Epic[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch('/api/epics')
-      .then(res => res.json())
-      .then(data => { setEpics(data); setLoading(false); })
-      .catch(err => { setError(err.message); setLoading(false); });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-        Error loading epics: {error}
-      </div>
-    );
-  }
+  const epics = useEpics();
 
   return (
     <div>

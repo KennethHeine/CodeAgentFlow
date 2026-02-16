@@ -1,115 +1,73 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import type { Epic, Task, AuditLog, TaskState } from '@/lib/types';
-import { getStateColor, getEpicStatusColor, getValidTransitions } from '@/lib/state-machine';
-
-interface EpicDetail extends Epic {
-  tasks: Task[];
-  auditLogs: AuditLog[];
-}
+import type { Task, TaskState } from '@/lib/types';
+import { getStateColor, getEpicStatusColor, getValidTransitions, canTransition } from '@/lib/state-machine';
+import { useEpicDetail, updateTaskState, updateEpic, generatePlan, createTask } from '@/lib/use-store';
 
 export default function EpicDetailPage() {
   const params = useParams();
   const epicId = params.id as string;
-  const [epic, setEpic] = useState<EpicDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { epic, tasks, auditLogs } = useEpicDetail(epicId);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [blockedReason, setBlockedReason] = useState('');
   const [showBlockedModal, setShowBlockedModal] = useState<string | null>(null);
 
-  const fetchEpic = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/epics/${epicId}`);
-      if (!res.ok) throw new Error('Epic not found');
-      const data = await res.json();
-      setEpic(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load epic');
-    } finally {
-      setLoading(false);
-    }
-  }, [epicId]);
-
-  useEffect(() => {
-    fetchEpic();
-  }, [fetchEpic]);
-
-  const handleTransition = async (taskId: string, targetState: TaskState, extra?: Record<string, string>) => {
+  const handleTransition = (taskId: string, targetState: TaskState, extra?: Record<string, string>) => {
     setActionLoading(taskId);
-    try {
-      const res = await fetch(`/api/tasks/${taskId}/transition`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetState, ...extra }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        alert(data.error || 'Transition failed');
-      }
-      await fetchEpic();
-    } finally {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) {
+      alert('Task not found');
       setActionLoading(null);
+      return;
     }
+
+    if (!canTransition(task.state, targetState)) {
+      alert(`Invalid transition: ${task.state} → ${targetState}`);
+      setActionLoading(null);
+      return;
+    }
+
+    if (targetState === 'BLOCKED' && !extra?.blockedReason) {
+      alert('blockedReason is required when transitioning to BLOCKED');
+      setActionLoading(null);
+      return;
+    }
+
+    updateTaskState(taskId, targetState, extra);
+    setActionLoading(null);
   };
 
-  const handleBlockTask = async (taskId: string) => {
+  const handleBlockTask = (taskId: string) => {
     if (!blockedReason.trim()) {
       alert('Please provide a reason for blocking');
       return;
     }
-    await handleTransition(taskId, 'BLOCKED', { blockedReason });
+    handleTransition(taskId, 'BLOCKED', { blockedReason });
     setShowBlockedModal(null);
     setBlockedReason('');
   };
 
-  const handleGeneratePlan = async () => {
+  const handleGeneratePlan = () => {
+    if (!epic) return;
     setActionLoading('generate');
-    try {
-      const res = await fetch(`/api/epics/${epicId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'generate-plan' }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        alert(data.error || 'Failed to generate plan');
-      }
-      await fetchEpic();
-    } finally {
-      setActionLoading(null);
+    const plan = generatePlan(epic.intent);
+    for (const taskInput of plan) {
+      createTask({ ...taskInput, epicId });
     }
+    setActionLoading(null);
   };
 
-  const handleUpdateStatus = async (status: string) => {
-    try {
-      await fetch(`/api/epics/${epicId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      });
-      await fetchEpic();
-    } catch {
-      alert('Failed to update epic status');
-    }
+  const handleUpdateStatus = (status: string) => {
+    updateEpic(epicId, { status: status as 'DRAFT' | 'RUNNING' | 'BLOCKED' | 'COMPLETED' });
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error || !epic) {
+  if (!epic) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-        {error || 'Epic not found'}
+        Epic not found
       </div>
     );
   }
@@ -192,8 +150,8 @@ export default function EpicDetailPage() {
       {/* Tasks Timeline */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Tasks ({epic.tasks.length})</h2>
-          {epic.tasks.length === 0 && (
+          <h2 className="text-lg font-semibold text-gray-900">Tasks ({tasks.length})</h2>
+          {tasks.length === 0 && (
             <button
               onClick={handleGeneratePlan}
               disabled={actionLoading === 'generate'}
@@ -204,13 +162,13 @@ export default function EpicDetailPage() {
           )}
         </div>
 
-        {epic.tasks.length === 0 ? (
+        {tasks.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
             <p className="text-gray-500">No tasks yet. Click &quot;Generate Plan&quot; to create tasks from your intent.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {epic.tasks.map((task, index) => (
+            {tasks.map((task, index) => (
               <div key={task.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-sm transition">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -305,11 +263,11 @@ export default function EpicDetailPage() {
       <div>
         <h2 className="text-lg font-semibold text-gray-900 mb-3">Audit Log</h2>
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {epic.auditLogs.length === 0 ? (
+          {auditLogs.length === 0 ? (
             <div className="p-4 text-center text-gray-500 text-sm">No audit entries yet.</div>
           ) : (
             <div className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
-              {epic.auditLogs.map(log => (
+              {auditLogs.map(log => (
                 <div key={log.id} className="px-4 py-2 flex items-center gap-3 text-sm">
                   <span className="text-gray-400 text-xs font-mono whitespace-nowrap">
                     {new Date(log.createdAt).toLocaleString()}
