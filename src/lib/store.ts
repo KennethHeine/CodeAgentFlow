@@ -84,6 +84,9 @@ export function deleteEpic(id: string): boolean {
   setCollection(STORAGE_KEYS.VALIDATION_RUNS,
     getCollection<ValidationRun>(STORAGE_KEYS.VALIDATION_RUNS).filter(v => !taskIds.includes(v.taskId))
   );
+  setCollection(STORAGE_KEYS.AUDIT_LOGS,
+    getCollection<AuditLog>(STORAGE_KEYS.AUDIT_LOGS).filter(l => l.epicId !== id)
+  );
 
   return true;
 }
