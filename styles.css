@@ -1,0 +1,59 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f4f5f7;
+  color: #222;
+}
+
+main {
+  max-width: 860px;
+  margin: 24px auto;
+  padding: 16px;
+}
+
+section {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  min-width: 180px;
+}
+
+button {
+  padding: 8px 12px;
+  border: 1px solid #777;
+  border-radius: 6px;
+  background: #222;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.muted {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+ul {
+  padding-left: 18px;
+}

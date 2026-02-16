@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeAgentFlow v1</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>CodeAgentFlow v1</h1>
+      <p class="muted">GitHub-native intent-to-PR orchestration UI (no DB/backend state).</p>
+
+      <section>
+        <h2>Authentication</h2>
+        <label for="pat">GitHub PAT</label>
+        <input id="pat" type="password" autocomplete="off" placeholder="ghp_..." />
+        <button id="savePatBtn">Save PAT to browser storage</button>
+        <p class="muted">Token is stored in localStorage for v1.</p>
+      </section>
+
+      <section>
+        <h2>Runtime Repository (Source of Truth: GitHub)</h2>
+        <div class="row">
+          <input id="runtimeOwner" type="text" placeholder="owner" />
+          <input id="runtimeRepo" type="text" placeholder="repo" />
+          <button id="loadRuntimeBtn">Load runtime state</button>
+        </div>
+        <ul id="runtimeSummary"></ul>
+      </section>
+
+      <section>
+        <h2>Epic Repository Specs (/epics/*.md)</h2>
+        <div class="row">
+          <input id="epicOwner" type="text" placeholder="epic owner" />
+          <input id="epicRepo" type="text" placeholder="epic repo" />
+          <button id="loadEpicsBtn">Load epics</button>
+        </div>
+        <ul id="epicList"></ul>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
