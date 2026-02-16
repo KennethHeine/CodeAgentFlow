@@ -54,7 +54,8 @@ function App() {
     try {
       const repoList = await listRepos();
       setRepos(repoList);
-    } catch {
+    } catch (err) {
+      console.error('Failed to load repositories:', err);
       setRepos([]);
     } finally {
       setReposLoading(false);
@@ -67,7 +68,8 @@ function App() {
     try {
       const detail = await loadEpicDetails(slug);
       setEpicDetail(detail);
-    } catch {
+    } catch (err) {
+      console.error('Failed to load epic details:', err);
       setEpicDetail(null);
     } finally {
       setEpicDetailLoading(false);

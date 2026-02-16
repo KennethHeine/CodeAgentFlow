@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { getPat, setPat, removePat } from '../utils/storage';
 import { initGitHubClient, verifyPat } from '../services/github';
 import type { GitHubUser } from '../types';
@@ -8,6 +8,7 @@ export function useAuth() {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialAuthAttempted = useRef(false);
 
   const authenticate = useCallback(async (token: string) => {
     setLoading(true);
@@ -36,6 +37,9 @@ export function useAuth() {
   }, []);
 
   useEffect(() => {
+    if (initialAuthAttempted.current) return;
+    initialAuthAttempted.current = true;
+
     const stored = getPat();
     if (stored) {
       authenticate(stored);

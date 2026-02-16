@@ -43,6 +43,8 @@ export function PatModal({ onSubmit, error, loading }: PatModalProps) {
                 placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
                 autoFocus
                 disabled={loading}
+                autoComplete="off"
+                spellCheck={false}
                 data-testid="pat-input"
               />
               <button
