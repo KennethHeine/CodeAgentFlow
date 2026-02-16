@@ -63,47 +63,50 @@ export default function EpicDetailPage() {
         let prUrl: string | undefined;
 
         if (task.targetRepo) {
-          const [tOwner, tRepo] = task.targetRepo.split('/');
+          const repoParts = task.targetRepo.split('/');
+          if (repoParts.length === 2 && repoParts[0] && repoParts[1]) {
+            const [tOwner, tRepo] = repoParts;
 
-          if (task.issueNumber && tOwner && tRepo) {
-            try {
-              const issue = await client.getIssue(tOwner, tRepo, task.issueNumber);
-              issueUrl = issue.html_url;
+            if (task.issueNumber) {
+              try {
+                const issue = await client.getIssue(tOwner, tRepo, task.issueNumber);
+                issueUrl = issue.html_url;
 
-              if (task.prNumber) {
-                try {
-                  const pr = await client.getPR(tOwner, tRepo, task.prNumber);
-                  prUrl = pr.html_url;
-                  let checks;
+                if (task.prNumber) {
                   try {
-                    checks = await client.getCheckRuns(tOwner, tRepo, pr.head.sha);
+                    const pr = await client.getPR(tOwner, tRepo, task.prNumber);
+                    prUrl = pr.html_url;
+                    let checks;
+                    try {
+                      checks = await client.getCheckRuns(tOwner, tRepo, pr.head.sha);
+                    } catch {
+                      checks = undefined;
+                    }
+                    state = deriveTaskState(issue, pr, checks);
                   } catch {
-                    checks = undefined;
+                    state = deriveTaskState(issue);
                   }
-                  state = deriveTaskState(issue, pr, checks);
-                } catch {
+                } else {
                   state = deriveTaskState(issue);
                 }
-              } else {
-                state = deriveTaskState(issue);
-              }
-            } catch {
-              // Issue doesn't exist or no access
-              state = 'PLANNED';
-            }
-          } else if (task.prNumber && tOwner && tRepo) {
-            try {
-              const pr = await client.getPR(tOwner, tRepo, task.prNumber);
-              prUrl = pr.html_url;
-              let checks;
-              try {
-                checks = await client.getCheckRuns(tOwner, tRepo, pr.head.sha);
               } catch {
-                checks = undefined;
+                // Issue doesn't exist or no access
+                state = 'PLANNED';
               }
-              state = deriveTaskState(undefined, pr, checks);
-            } catch {
-              state = 'PLANNED';
+            } else if (task.prNumber) {
+              try {
+                const pr = await client.getPR(tOwner, tRepo, task.prNumber);
+                prUrl = pr.html_url;
+                let checks;
+                try {
+                  checks = await client.getCheckRuns(tOwner, tRepo, pr.head.sha);
+                } catch {
+                  checks = undefined;
+                }
+                state = deriveTaskState(undefined, pr, checks);
+              } catch {
+                state = 'PLANNED';
+              }
             }
           }
         }

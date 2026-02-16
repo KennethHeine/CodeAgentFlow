@@ -92,10 +92,7 @@ export function createGitHubClient(token: string) {
       message: string,
       sha?: string,
     ): Promise<{ content: RepoContent; commit: { sha: string } }> {
-      const encoded = btoa(
-        new Uint8Array(new TextEncoder().encode(content))
-          .reduce((acc, byte) => acc + String.fromCharCode(byte), ''),
-      );
+      const encoded = btoa(unescape(encodeURIComponent(content)));
       return request<{ content: RepoContent; commit: { sha: string } }>(
         token,
         `/repos/${owner}/${repo}/contents/${path}`,

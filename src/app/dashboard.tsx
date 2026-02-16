@@ -62,33 +62,28 @@ export default function Dashboard() {
           for (const task of parsed.tasks) {
             // Quick state approximation for dashboard
             let state: TaskState = 'PLANNED';
-            if (task.prNumber) {
-              try {
-                const pr = await client.getPR(
-                  ...task.targetRepo.split('/') as [string, string],
-                  task.prNumber,
-                );
-                const issue = task.issueNumber
-                  ? await client.getIssue(
-                      ...task.targetRepo.split('/') as [string, string],
-                      task.issueNumber,
-                    )
-                  : undefined;
-                let checks;
+            const repoParts = task.targetRepo.split('/');
+            if (repoParts.length === 2 && repoParts[0] && repoParts[1]) {
+              const [tOwner, tRepo] = repoParts;
+              if (task.prNumber) {
                 try {
-                  checks = await client.getCheckRuns(
-                    ...task.targetRepo.split('/') as [string, string],
-                    pr.head.sha,
-                  );
+                  const pr = await client.getPR(tOwner, tRepo, task.prNumber);
+                  const issue = task.issueNumber
+                    ? await client.getIssue(tOwner, tRepo, task.issueNumber)
+                    : undefined;
+                  let checks;
+                  try {
+                    checks = await client.getCheckRuns(tOwner, tRepo, pr.head.sha);
+                  } catch {
+                    checks = undefined;
+                  }
+                  state = deriveTaskState(issue, pr, checks);
                 } catch {
-                  checks = undefined;
+                  state = 'PLANNED';
                 }
-                state = deriveTaskState(issue, pr, checks);
-              } catch {
-                state = 'PLANNED';
+              } else if (task.issueNumber) {
+                state = 'RUNNING';
               }
-            } else if (task.issueNumber) {
-              state = 'RUNNING';
             }
             stateCounts[state] = (stateCounts[state] ?? 0) + 1;
           }
