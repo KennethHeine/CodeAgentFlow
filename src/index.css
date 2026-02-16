@@ -1,0 +1,40 @@
+:root {
+  font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #e8edff;
+  background-color: #05060c;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 20%, rgba(122, 111, 255, 0.12), transparent 20%),
+    radial-gradient(circle at 80% 0%, rgba(54, 199, 255, 0.12), transparent 25%),
+    linear-gradient(145deg, #05060c 0%, #0b1224 40%, #070a14 100%);
+  color: #e8edff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  font: inherit;
+}
