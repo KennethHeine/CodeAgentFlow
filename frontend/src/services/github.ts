@@ -126,7 +126,7 @@ export async function createOrUpdateFile(
     repo,
     path,
     message,
-    content: btoa(String.fromCodePoint(...new TextEncoder().encode(content))),
+    content: btoa(Array.from(new TextEncoder().encode(content), (b) => String.fromCharCode(b)).join('')),
     sha,
   });
 }
