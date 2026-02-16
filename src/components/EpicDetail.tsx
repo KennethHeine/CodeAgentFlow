@@ -17,6 +17,7 @@ export const EpicDetail: React.FC = () => {
     if (epicId && epicService) {
       loadEpic();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [epicId, epicService]);
 
   const loadEpic = async () => {

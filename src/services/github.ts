@@ -184,6 +184,7 @@ export class GitHubClient {
       state,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.map((pr: any) => ({
       number: pr.number,
       title: pr.title,

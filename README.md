@@ -2,6 +2,8 @@
 
 A developer-first frontend application for planning and orchestrating long-running work by turning high-level intents into sequences of small, PR-friendly tasks, then driving GitHub Copilot Coding Agent runs to execute them safely over time.
 
+![CodeAgentFlow PAT Modal](./screenshot-pat-modal.png)
+
 ## Features
 
 - **Modern, Developer-First UI** - Clean, IDE-like interface with keyboard-friendly navigation and GitHub deep-links
