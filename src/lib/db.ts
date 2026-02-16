@@ -290,11 +290,11 @@ export function listAuditLogs(epicId?: string, taskId?: string, limit: number = 
   return db.prepare(query).all(...values) as AuditLog[];
 }
 
-// ── Plan generation (mock) ──
+// ── Default plan generation (v1 placeholder) ──
+// In v1, we generate a reasonable default set of tasks from the intent.
+// In production, this would call an LLM or planning service.
 
 export function generatePlan(intent: string): CreateTaskInput[] {
-  // In v1, we generate a reasonable set of tasks from the intent.
-  // This is a simplified mock — in production this would call an LLM.
   const tasks: CreateTaskInput[] = [
     {
       epicId: '', // will be set by caller
