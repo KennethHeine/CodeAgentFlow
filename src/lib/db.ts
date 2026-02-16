@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import type { Epic, Task, ValidationRun, AuditLog, CreateEpicInput, CreateTaskInput, TaskState, EpicStatus } from './types';
+import type { Epic, Task, ValidationRun, AuditLog, CreateEpicInput, CreateTaskInput, TaskState } from './types';
 
 const DB_PATH = path.join(process.cwd(), 'codeagentflow.db');
 
@@ -292,7 +292,7 @@ export function listAuditLogs(epicId?: string, taskId?: string, limit: number = 
 
 // ── Plan generation (mock) ──
 
-export function generatePlan(intent: string, repo: string): CreateTaskInput[] {
+export function generatePlan(intent: string): CreateTaskInput[] {
   // In v1, we generate a reasonable set of tasks from the intent.
   // This is a simplified mock — in production this would call an LLM.
   const tasks: CreateTaskInput[] = [

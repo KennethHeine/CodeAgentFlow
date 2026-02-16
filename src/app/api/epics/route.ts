@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   });
 
   if (generateTasks) {
-    const plan = generatePlan(intent, repo);
+    const plan = generatePlan(intent);
     for (const taskInput of plan) {
       createTask({ ...taskInput, epicId: epic.id });
     }

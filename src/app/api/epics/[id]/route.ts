@@ -43,7 +43,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const action = body.action;
 
   if (action === 'generate-plan') {
-    const plan = generatePlan(epic.intent, epic.repo);
+    const plan = generatePlan(epic.intent);
     const tasks = [];
     for (const taskInput of plan) {
       tasks.push(createTask({ ...taskInput, epicId: id }));
