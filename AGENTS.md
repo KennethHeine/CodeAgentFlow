@@ -123,7 +123,7 @@ npm run build && npm run lint && npm test
 When finishing any code change, ensure:
 
 1. **Tests**: Add or update tests for new/changed behavior. Unit tests go in `src/**/*.test.{ts,tsx}`, E2E tests in `e2e/`. If no tests are needed, explicitly justify why.
-2. **Docs**: Update `README.md`, `AGENTS.md`, or relevant docs if behavior, configuration, or developer workflow changes.
+2. **Docs**: **Always** update documentation alongside code changes. When you add, rename, or remove files, components, hooks, utilities, or tests — update the relevant docs (`README.md`, `AGENTS.md`, `TESTING.md`, `src/README.md`, `.github/copilot-instructions.md`). Keep test counts, project maps, file trees, and feature lists accurate. Documentation maintenance is not optional.
 3. **Validation**: Run the full validation suite before opening a PR:
    ```bash
    npm run build && npm run lint && npm test
