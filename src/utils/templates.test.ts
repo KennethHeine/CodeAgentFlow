@@ -7,6 +7,7 @@ import {
   parseTaskMd,
   deriveTaskStatus,
 } from '../utils/templates';
+import { createTaskDraft, createSubtaskDraft } from '../test/fixtures';
 
 describe('renderGoalMd', () => {
   it('renders goal markdown', () => {
@@ -25,8 +26,8 @@ describe('renderRequirementsMd', () => {
 describe('renderPlanMd', () => {
   it('renders plan with tasks', () => {
     const tasks = [
-      { title: 'Setup', slug: 'setup', subtasks: [{ title: 'Research', type: 'research' as const, description: '' }] },
-      { title: 'Build', slug: 'build', subtasks: [] },
+      createTaskDraft({ title: 'Setup', slug: 'setup', subtasks: [createSubtaskDraft({ title: 'Research', type: 'research', description: '' })] }),
+      createTaskDraft({ title: 'Build', slug: 'build', subtasks: [] }),
     ];
     const result = renderPlanMd('My Epic', 'High level plan', tasks);
     expect(result).toContain('# My Epic — Plan');
@@ -44,14 +45,14 @@ describe('renderPlanMd', () => {
 
 describe('renderTaskMd', () => {
   it('renders task markdown', () => {
-    const task = {
+    const task = createTaskDraft({
       title: 'Setup Auth',
       slug: 'setup-auth',
       subtasks: [
-        { title: 'Research OAuth', type: 'research' as const, description: 'Look into OAuth2' },
-        { title: 'Implement', type: 'work' as const, description: 'Code it up' },
+        createSubtaskDraft({ title: 'Research OAuth', type: 'research', description: 'Look into OAuth2' }),
+        createSubtaskDraft({ title: 'Implement', type: 'work', description: 'Code it up' }),
       ],
-    };
+    });
     const result = renderTaskMd(task, 0);
     expect(result).toContain('# Task 001: Setup Auth');
     expect(result).toContain('## Subtasks');
@@ -62,7 +63,7 @@ describe('renderTaskMd', () => {
   });
 
   it('renders task without subtasks', () => {
-    const task = { title: 'Simple Task', slug: 'simple', subtasks: [] };
+    const task = createTaskDraft({ title: 'Simple Task', slug: 'simple', subtasks: [] });
     const result = renderTaskMd(task, 2);
     expect(result).toContain('# Task 003: Simple Task');
     expect(result).not.toContain('## Subtasks');
