@@ -66,7 +66,20 @@ jobs:
             core.setOutput('pr-title', prDetails.title);
 
       - name: Enable auto-merge for Dependabot PRs
-        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "${{ github.repository }}"
+        run: |
+          for attempt in 1 2 3 4 5; do
+            echo "Attempt $attempt of 5..."
+            if gh pr merge --auto --squash "$PR_NUMBER" --repo "${{ github.repository }}" 2>&1; then
+              echo "Auto-merge enabled successfully on attempt $attempt."
+              exit 0
+            fi
+            if [ "$attempt" -lt 5 ]; then
+              echo "Retrying in 10 seconds..."
+              sleep 10
+            fi
+          done
+          echo "::error::Failed to enable auto-merge after 5 attempts."
+          exit 1
         env:
           PR_NUMBER: ${{ steps.pr-info.outputs.pr-number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
