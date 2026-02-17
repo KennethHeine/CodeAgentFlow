@@ -47,7 +47,6 @@ Multi-step flow: Name → Goal → Requirements → Plan → Tasks with Markdown
 ## Getting Started
 
 ```bash
-cd frontend
 npm install
 npm run dev
 ```
@@ -66,14 +65,14 @@ npm run test:e2e
 ## Project Structure
 
 ```
-frontend/src/
+src/
   components/   # React UI components
   hooks/        # Custom React hooks
   services/     # GitHub API client (Octokit)
   types/        # TypeScript type definitions
   utils/        # Utility functions (slugify, templates, storage)
   test/         # Test setup
-frontend/e2e/   # Playwright E2E tests
+e2e/            # Playwright E2E tests
 ```
 
 ## Epic Repo Structure
