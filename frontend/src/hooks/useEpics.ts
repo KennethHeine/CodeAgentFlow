@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getContents, getFileContent, createOrUpdateFile } from '../services/github';
-import { slugify, taskFilename, renderGoalMd, renderRequirementsMd, renderPlanMd, renderTaskMd } from '../utils';
+import { slugify, taskFilename, renderGoalMd, renderRequirementsMd, renderPlanMd, renderTaskMd, parseTaskMd } from '../utils';
 import type { Epic, EpicCreationState, TaskDraft } from '../types';
 
 const EPICS_BASE_PATH = 'epics';
@@ -24,7 +24,9 @@ export function useEpics(owner: string | null, repo: string | null) {
         tasks: [],
       }));
       setEpics(epicList);
-    } catch {
+    } catch (err) {
+      console.error('Failed to load epics:', err);
+      setError('Failed to load epics');
       setEpics([]);
     } finally {
       setLoading(false);
@@ -54,13 +56,14 @@ export function useEpics(owner: string | null, repo: string | null) {
         const tasks = await Promise.all(
           taskFiles.map(async (tf) => {
             const content = await getFileContent(owner, repo, tf.path);
+            const parsed = parseTaskMd(content || '', tf.name);
             return {
               id: tf.name,
               slug: tf.name.replace(/^\d{3}-/, '').replace(/\.md$/, ''),
-              title: tf.name,
+              title: parsed.title || tf.name,
               filename: tf.name,
               content: content || '',
-              subtasks: [],
+              subtasks: parsed.subtasks || [],
               status: 'pending' as const,
             };
           })

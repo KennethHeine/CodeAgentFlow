@@ -19,7 +19,8 @@ export function useAuth() {
       setPat(token);
       setPatState(token);
       setUser(userData);
-    } catch {
+    } catch (err) {
+      console.error('Authentication failed:', err);
       setError('Invalid PAT or insufficient permissions. Please check your token.');
       removePat();
       setPatState(null);

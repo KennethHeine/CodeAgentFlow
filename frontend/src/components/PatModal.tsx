@@ -20,12 +20,17 @@ export function PatModal({ onSubmit, error, loading }: PatModalProps) {
 
   return (
     <div className="pat-modal-overlay" data-testid="pat-modal">
-      <div className="pat-modal">
+      <div
+        className="pat-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pat-modal-title"
+      >
         <div className="pat-modal-header">
           <div className="pat-modal-icon">
             <KeyRound size={32} />
           </div>
-          <h1>Welcome to CodeAgentFlow</h1>
+          <h1 id="pat-modal-title">Welcome to CodeAgentFlow</h1>
           <p className="pat-modal-subtitle">
             Connect your GitHub account to get started
           </p>

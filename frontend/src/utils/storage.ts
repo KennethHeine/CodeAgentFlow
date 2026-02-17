@@ -22,11 +22,15 @@ export function getStorageItem<T>(key: string): T | null {
  * Set a value in localStorage with optional TTL (in milliseconds).
  */
 export function setStorageItem<T>(key: string, value: T, ttlMs?: number): void {
-  const item = {
-    value,
-    expiry: ttlMs ? Date.now() + ttlMs : null,
-  };
-  localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(item));
+  try {
+    const item = {
+      value,
+      expiry: ttlMs ? Date.now() + ttlMs : null,
+    };
+    localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(item));
+  } catch {
+    // Storage may be full or disabled (e.g., Safari private mode)
+  }
 }
 
 /**

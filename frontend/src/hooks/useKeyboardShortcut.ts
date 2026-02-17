@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 
 type KeyCombo = {
   key: string;
@@ -9,6 +9,12 @@ type KeyCombo = {
 };
 
 export function useKeyboardShortcut(combo: KeyCombo, callback: () => void) {
+  const memoizedCombo = useMemo(
+    () => combo,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [combo.key, combo.ctrl, combo.shift, combo.alt, combo.meta]
+  );
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
@@ -22,17 +28,17 @@ export function useKeyboardShortcut(combo: KeyCombo, callback: () => void) {
       }
 
       if (
-        e.key.toLowerCase() === combo.key.toLowerCase() &&
-        !!e.ctrlKey === !!combo.ctrl &&
-        !!e.shiftKey === !!combo.shift &&
-        !!e.altKey === !!combo.alt &&
-        !!e.metaKey === !!combo.meta
+        e.key.toLowerCase() === memoizedCombo.key.toLowerCase() &&
+        !!e.ctrlKey === !!memoizedCombo.ctrl &&
+        !!e.shiftKey === !!memoizedCombo.shift &&
+        !!e.altKey === !!memoizedCombo.alt &&
+        !!e.metaKey === !!memoizedCombo.meta
       ) {
         e.preventDefault();
         callback();
       }
     },
-    [combo, callback]
+    [memoizedCombo, callback]
   );
 
   useEffect(() => {

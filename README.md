@@ -12,6 +12,23 @@ A developer-first frontend for planning and orchestrating long-running work by t
 - **Transparency** – Deep-links to GitHub issues, PRs, checks, and Markdown specs
 - **Dark theme** – Modern, clean design optimized for developer productivity
 
+## Screenshots
+
+### PAT Login Gate
+The app greets new users with a PAT modal that explains required scopes and storage policy.
+
+![PAT Modal](docs/images/01-pat-modal.png)
+
+### Token Entry
+Users enter their GitHub Personal Access Token to connect.
+
+![PAT Modal with Token](docs/images/02-pat-modal-filled.png)
+
+### Error Handling
+Clear error messages when authentication fails.
+
+![PAT Modal Error](docs/images/03-pat-modal-error.png)
+
 ## Getting Started
 
 ```bash

@@ -23,7 +23,7 @@ export function RepoSelector({ repos, loading, onSelect, onClose }: RepoSelector
       <div className="modal">
         <div className="modal-header">
           <h2>Select Epic Repository</h2>
-          <button className="modal-close" onClick={onClose}>
+          <button className="modal-close" onClick={onClose} aria-label="Close modal">
             <X size={18} />
           </button>
         </div>

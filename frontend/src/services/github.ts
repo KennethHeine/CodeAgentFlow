@@ -82,7 +82,7 @@ export async function getContents(
         sha: data.sha,
         type: data.type as 'file' | 'dir',
         content: 'content' in data && data.content
-          ? atob(data.content.replace(/\n/g, ''))
+          ? new TextDecoder().decode(Uint8Array.from(atob(data.content.replace(/\n/g, '')), (c) => c.charCodeAt(0)))
           : undefined,
         html_url: data.html_url ?? '',
         download_url: 'download_url' in data ? (data.download_url ?? undefined) : undefined,

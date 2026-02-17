@@ -135,7 +135,7 @@ export function EpicDetail({ epic, loading, epicRepo, onRefresh }: EpicDetailPro
                     <div className="task-card-header">
                       <TaskStatusIcon status={task.status} />
                       <span className="task-card-title">{task.title}</span>
-                      {task.issueNumber && (
+                      {task.issueNumber && epicRepo && (
                         <a
                           href={`https://github.com/${epicRepo}/issues/${task.issueNumber}`}
                           target="_blank"
@@ -145,7 +145,7 @@ export function EpicDetail({ epic, loading, epicRepo, onRefresh }: EpicDetailPro
                           #{task.issueNumber}
                         </a>
                       )}
-                      {task.prNumber && (
+                      {task.prNumber && epicRepo && (
                         <a
                           href={`https://github.com/${epicRepo}/pull/${task.prNumber}`}
                           target="_blank"
