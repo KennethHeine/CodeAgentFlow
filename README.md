@@ -19,15 +19,30 @@ The app greets new users with a PAT modal that explains required scopes and stor
 
 ![PAT Modal](docs/images/01-pat-modal.png)
 
-### Token Entry
-Users enter their GitHub Personal Access Token to connect.
+### Main Layout — Epic Overview
+IDE-like shell with sidebar navigation, epic tree, and tabbed detail view showing task stats and file listing.
 
-![PAT Modal with Token](docs/images/02-pat-modal-filled.png)
+![Main Layout](docs/images/04-main-layout.png)
 
-### Error Handling
-Clear error messages when authentication fails.
+### Tasks View
+Task cards with status indicators, subtask lists, and GitHub deep-links to issues and PRs.
 
-![PAT Modal Error](docs/images/03-pat-modal-error.png)
+![Tasks View](docs/images/05-tasks-view.png)
+
+### Goal View
+Markdown content rendered in a code-style view for each epic document tab.
+
+![Goal View](docs/images/06-goal-view.png)
+
+### Epic Creation Wizard — Name Step
+Step-by-step wizard with progress indicators. Auto-generates a slug from the epic name.
+
+![Wizard Name](docs/images/07-wizard-name.png)
+
+### Epic Creation Wizard — Goal Step
+Multi-step flow: Name → Goal → Requirements → Plan → Tasks with Markdown support.
+
+![Wizard Goal](docs/images/08-wizard-goal.png)
 
 ## Getting Started
 
