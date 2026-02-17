@@ -17,22 +17,27 @@ Humans stay in control via manual approval and merge — no autonomous merging.
 ### PAT Login Gate
 When no GitHub PAT is found, the app shows a modal explaining required scopes and where the token is stored (browser only).
 
-![PAT Modal](docs/images/pat-modal.svg)
+![PAT Modal](docs/images/pat-modal.png)
 
 ### Dashboard
 Overview of all epics with status, task counts, and quick navigation.
 
-![Dashboard](docs/images/dashboard.svg)
+![Dashboard](docs/images/dashboard.png)
 
-### Epic Detail
-Step-by-step epic creation: Goal → Requirements → Plan → Tasks. Each step stores a markdown file in your private Epic repo.
+### Epic List
+Browse all your epics with filtering and sorting options.
 
-![Epic Detail](docs/images/epic-detail.svg)
+![Epic List](docs/images/epic-list.png)
 
-### Task Detail
-View task content, research and work subtasks, GitHub links (issue, PR, spec), and the full orchestration pipeline status.
+### Epic Creation
+Create a new epic with a simple guided wizard.
 
-![Task Detail](docs/images/task-detail.svg)
+![Epic Create](docs/images/epic-create.png)
+
+### Settings
+Configure your epic repository, manage authentication, and control app preferences.
+
+![Settings](docs/images/settings.png)
 
 ## Key Features
 
