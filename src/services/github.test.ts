@@ -1,18 +1,18 @@
-import { describe, it, expect } from 'vitest';
-import { initGitHubClient, getClient } from './github';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 describe('GitHub service', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
   describe('getClient', () => {
-    it('throws when client is not initialized', () => {
-      // Reset the module-level octokit by re-importing fresh
-      // Since we can't easily reset module state, test the throw path directly
-      expect(() => {
-        // Access internals - the client is already null at start if no PAT provided
-        // We'll test the init/get flow instead
-      }).not.toThrow();
+    it('throws when client is not initialized', async () => {
+      const { getClient } = await import('./github');
+      expect(() => getClient()).toThrow('GitHub client not initialized');
     });
 
-    it('returns client after initialization', () => {
+    it('returns client after initialization', async () => {
+      const { initGitHubClient, getClient } = await import('./github');
       initGitHubClient('ghp_test_token_123');
       const client = getClient();
       expect(client).toBeDefined();
@@ -20,18 +20,19 @@ describe('GitHub service', () => {
   });
 
   describe('initGitHubClient', () => {
-    it('creates a new Octokit instance', () => {
+    it('creates a new Octokit instance', async () => {
+      const { initGitHubClient, getClient } = await import('./github');
       initGitHubClient('ghp_another_token');
       const client = getClient();
       expect(client).toBeDefined();
     });
 
-    it('replaces existing client when called again', () => {
+    it('replaces existing client when called again', async () => {
+      const { initGitHubClient, getClient } = await import('./github');
       initGitHubClient('ghp_token_1');
       const client1 = getClient();
       initGitHubClient('ghp_token_2');
       const client2 = getClient();
-      // Both should be defined but different instances
       expect(client1).toBeDefined();
       expect(client2).toBeDefined();
     });
