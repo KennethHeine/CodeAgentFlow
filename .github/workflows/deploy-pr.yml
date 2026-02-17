@@ -12,58 +12,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Job for testing (runs in parallel with deploy)
-  test:
-    if: github.event.action != 'closed'
-    runs-on: ubuntu-latest
-    name: Run Tests
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          submodules: true
-          lfs: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run linter
-        run: npm run lint
-
-      - name: Run unit tests
-        run: npm test
-
-      - name: Cache Playwright Browsers
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
-
-      - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium --with-deps
-
-      - name: Install Playwright System Dependencies
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
-
-      - name: Build application
-        run: npm run build
-
-      - name: Run Playwright tests
-        run: npm run test:e2e
-
-  # Job for deploying PR preview (runs in parallel with test, non-Dependabot PRs only)
+  # Job for deploying PR preview (non-Dependabot PRs only)
+  # Testing is handled by the CI workflow which runs on all pull requests
   deploy_preview:
     if: github.event.action != 'closed' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
