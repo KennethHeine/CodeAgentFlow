@@ -1,0 +1,80 @@
+name: Dependabot Auto-Merge
+
+on:
+  workflow_run:
+    workflows: ['Deploy PR Preview']
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]'
+    steps:
+      - name: Get PR info from workflow run
+        id: pr-info
+        uses: actions/github-script@v8
+        with:
+          script: |
+            // Get the PR associated with the workflow run
+            const { data: workflowRun } = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
+
+            // Use the pull_requests array from the workflow run
+            const prs = workflowRun.pull_requests;
+
+            if (!prs || prs.length === 0) {
+              // Fallback: search for PR by head branch
+              const { data: searchPrs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head: `${context.repo.owner}:${context.payload.workflow_run.head_branch}`,
+                state: 'open'
+              });
+              
+              if (searchPrs.length === 0) {
+                core.setFailed('No open PR found for this workflow run');
+                return;
+              }
+              
+              core.setOutput('pr-number', searchPrs[0].number);
+              core.setOutput('pr-url', searchPrs[0].html_url);
+              core.setOutput('pr-title', searchPrs[0].title);
+              return;
+            }
+
+            const pr = prs[0];
+            core.setOutput('pr-number', pr.number);
+            core.setOutput('pr-url', pr.url.replace('api.github.com/repos', 'github.com').replace('/pulls/', '/pull/'));
+
+            // Fetch full PR details for the title
+            const { data: prDetails } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+            core.setOutput('pr-title', prDetails.title);
+
+      - name: Enable auto-merge for Dependabot PRs
+        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "${{ github.repository }}"
+        env:
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr-number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## 🤖 Dependabot Auto-Merge" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR:** ${{ steps.pr-info.outputs.pr-title }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Auto-merge enabled with squash strategy." >> $GITHUB_STEP_SUMMARY
