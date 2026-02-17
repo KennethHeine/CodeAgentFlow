@@ -8,7 +8,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   # Job for testing (runs before production deployment)
@@ -119,3 +119,28 @@ jobs:
           # Skip Oryx build since we use pre-built artifacts with Node 22+
           # This avoids EBADENGINE warnings from Azure's default Node 18.x
           skip_app_build: true
+
+  # Job for creating a GitHub release after successful deployment
+  create_release:
+    needs: deploy_production
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          TAG="v$(date +'%Y.%m.%d')-${{ github.run_number }}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            --title "Release ${{ steps.tag.outputs.tag }}" \
+            --generate-notes \
+            --latest
