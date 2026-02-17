@@ -14,6 +14,8 @@ export const EpicList: React.FC = () => {
   const [repoInput, setRepoInput] = useState(epicRepo || '');
   const [isCreating, setIsCreating] = useState(false);
   const [newEpicName, setNewEpicName] = useState('');
+  const [error, setError] = useState<string>('');
+  const [repoError, setRepoError] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,21 +29,38 @@ export const EpicList: React.FC = () => {
     if (!epicService) return;
 
     setIsLoading(true);
+    setError('');
     try {
       const epicList = await epicService.listEpics();
       setEpics(epicList);
     } catch (error) {
       console.error('Failed to load epics:', error);
+      setError('Failed to load epics. Please check your repository access and try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const isValidRepoFormat = (value: string): boolean => {
+    const trimmed = value.trim();
+    const parts = trimmed.split('/');
+    if (parts.length !== 2) {
+      return false;
+    }
+    const [owner, repo] = parts;
+    return owner.trim().length > 0 && repo.trim().length > 0;
+  };
+
   const handleSetRepo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (repoInput.includes('/')) {
-      setEpicRepo(repoInput);
+    setRepoError('');
+
+    if (!isValidRepoFormat(repoInput)) {
+      setRepoError('Invalid repository format. Please use "owner/repo" format (e.g., "username/my-epics-repo").');
+      return;
     }
+
+    setEpicRepo(repoInput.trim());
   };
 
   const handleCreateEpic = async (e: React.FormEvent) => {
@@ -49,6 +68,7 @@ export const EpicList: React.FC = () => {
     if (!epicService || !newEpicName.trim()) return;
 
     setIsCreating(true);
+    setError('');
     try {
       const epicId = await epicService.createEpic(newEpicName);
       setNewEpicName('');
@@ -56,7 +76,7 @@ export const EpicList: React.FC = () => {
       navigate(`/epic/${epicId}`);
     } catch (error) {
       console.error('Failed to create epic:', error);
-    } finally {
+      setError('Failed to create epic. Please check your repository permissions and try again.');
       setIsCreating(false);
     }
   };
@@ -78,11 +98,17 @@ export const EpicList: React.FC = () => {
                 id="repo"
                 type="text"
                 value={repoInput}
-                onChange={(e) => setRepoInput(e.target.value)}
+                onChange={(e) => {
+                  setRepoInput(e.target.value);
+                  setRepoError('');
+                }}
                 placeholder="username/my-epics-repo"
                 className="input-field w-full"
                 required
               />
+              {repoError && (
+                <p className="text-red-400 text-sm mt-2">{repoError}</p>
+              )}
               <p className="text-sm text-gray-400 mt-2">
                 This repository should be private and dedicated to storing your CodeAgentFlow epics.
               </p>
@@ -121,6 +147,18 @@ export const EpicList: React.FC = () => {
         </button>
       </div>
 
+      {error && (
+        <div className="bg-red-900 bg-opacity-30 border border-red-800 rounded p-4 mb-6 text-red-200">
+          {error}
+          <button
+            onClick={() => loadEpics()}
+            className="ml-4 text-sm underline hover:text-red-100"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {isCreating && (
         <div className="card mb-6">
           <form onSubmit={handleCreateEpic} className="space-y-4">
@@ -148,6 +186,7 @@ export const EpicList: React.FC = () => {
                 onClick={() => {
                   setIsCreating(false);
                   setNewEpicName('');
+                  setError('');
                 }}
                 className="btn-secondary"
               >

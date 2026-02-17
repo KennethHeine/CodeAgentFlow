@@ -12,6 +12,8 @@ export const EpicDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'goal' | 'requirements' | 'plan' | 'tasks'>('goal');
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState('');
+  const [error, setError] = useState<string>('');
+  const [saveError, setSaveError] = useState<string>('');
 
   useEffect(() => {
     if (epicId && epicService) {
@@ -24,11 +26,13 @@ export const EpicDetail: React.FC = () => {
     if (!epicId || !epicService) return;
 
     setIsLoading(true);
+    setError('');
     try {
       const data = await epicService.getEpic(epicId);
       setEpic(data);
     } catch (error) {
       console.error('Failed to load epic:', error);
+      setError('Failed to load epic. Please check your repository access and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -52,11 +56,13 @@ export const EpicDetail: React.FC = () => {
 
     setEditContent(content);
     setIsEditing(true);
+    setSaveError('');
   };
 
   const handleSave = async () => {
     if (!epicId || !epicService) return;
 
+    setSaveError('');
     try {
       switch (activeTab) {
         case 'goal':
@@ -74,6 +80,7 @@ export const EpicDetail: React.FC = () => {
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to save:', error);
+      setSaveError('Failed to save changes. Please check your repository permissions and try again.');
     }
   };
 
@@ -81,6 +88,24 @@ export const EpicDetail: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-gray-400">Loading epic...</p>
+      </div>
+    );
+  }
+
+  if (error && !epic) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <p className="text-red-400 mb-4">{error}</p>
+          <div className="flex gap-2 justify-center">
+            <button onClick={() => loadEpic()} className="btn-primary">
+              Retry
+            </button>
+            <button onClick={() => navigate('/')} className="btn-secondary">
+              Back to Epics
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -147,6 +172,7 @@ export const EpicDetail: React.FC = () => {
               onClick={() => {
                 setActiveTab(tab);
                 setIsEditing(false);
+                setSaveError('');
               }}
               className={`pb-3 px-1 border-b-2 transition-colors capitalize ${
                 activeTab === tab
@@ -174,12 +200,21 @@ export const EpicDetail: React.FC = () => {
                 <button onClick={handleSave} className="btn-primary">
                   Save
                 </button>
-                <button onClick={() => setIsEditing(false)} className="btn-secondary">
+                <button onClick={() => {
+                  setIsEditing(false);
+                  setSaveError('');
+                }} className="btn-secondary">
                   Cancel
                 </button>
               </div>
             )}
           </div>
+
+          {saveError && (
+            <div className="bg-red-900 bg-opacity-30 border border-red-800 rounded p-3 mb-4 text-red-200">
+              {saveError}
+            </div>
+          )}
 
           {isEditing ? (
             <textarea

@@ -33,78 +33,97 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Initialize from storage on mount
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedPAT = storage.getPAT();
-      const storedEpicRepo = storage.getEpicRepo();
+      try {
+        const storedPAT = storage.getPAT();
+        const storedEpicRepo = storage.getEpicRepo();
 
-      if (storedPAT) {
-        const github = new GitHubClient(storedPAT);
-        const validation = await github.validateToken();
+        if (storedPAT) {
+          const github = new GitHubClient(storedPAT);
+          const validation = await github.validateToken();
 
-        if (validation.valid) {
-          const user = await github.getUser();
+          if (validation.valid) {
+            const user = await github.getUser();
 
-          let epicService: EpicService | null = null;
-          if (storedEpicRepo) {
-            const [owner, repo] = storedEpicRepo.split('/');
-            epicService = new EpicService(github, owner, repo);
+            let epicService: EpicService | null = null;
+            if (storedEpicRepo) {
+              const [owner, repo] = storedEpicRepo.split('/');
+              epicService = new EpicService(github, owner, repo);
+            }
+
+            setState({
+              pat: storedPAT,
+              epicRepo: storedEpicRepo,
+              github,
+              epicService,
+              user,
+              isLoading: false,
+            });
+            return;
+          } else {
+            // Invalid token, clear it
+            storage.removePAT();
           }
-
-          setState({
-            pat: storedPAT,
-            epicRepo: storedEpicRepo,
-            github,
-            epicService,
-            user,
-            isLoading: false,
-          });
-          return;
-        } else {
-          // Invalid token, clear it
-          storage.removePAT();
         }
-      }
 
-      setState({
-        pat: null,
-        epicRepo: null,
-        github: null,
-        epicService: null,
-        user: null,
-        isLoading: false,
-      });
+        setState({
+          pat: null,
+          epicRepo: null,
+          github: null,
+          epicService: null,
+          user: null,
+          isLoading: false,
+        });
+      } catch (error) {
+        console.error('Failed to initialize auth:', error);
+        // Clear potentially corrupted state
+        storage.removePAT();
+        setState({
+          pat: null,
+          epicRepo: null,
+          github: null,
+          epicService: null,
+          user: null,
+          isLoading: false,
+        });
+      }
     };
 
     initializeAuth();
   }, []);
 
   const setPAT = async (token: string): Promise<boolean> => {
-    const github = new GitHubClient(token);
-    const validation = await github.validateToken();
+    try {
+      const github = new GitHubClient(token);
+      const validation = await github.validateToken();
 
-    if (!validation.valid) {
+      if (!validation.valid) {
+        return false;
+      }
+
+      const user = await github.getUser();
+      storage.setPAT(token);
+
+      const storedEpicRepo = storage.getEpicRepo();
+      let epicService: EpicService | null = null;
+      if (storedEpicRepo) {
+        const [owner, repo] = storedEpicRepo.split('/');
+        epicService = new EpicService(github, owner, repo);
+      }
+
+      setState({
+        pat: token,
+        epicRepo: storedEpicRepo,
+        github,
+        epicService,
+        user,
+        isLoading: false,
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Failed to set PAT:', error);
       return false;
     }
-
-    const user = await github.getUser();
-    storage.setPAT(token);
-
-    const storedEpicRepo = storage.getEpicRepo();
-    let epicService: EpicService | null = null;
-    if (storedEpicRepo) {
-      const [owner, repo] = storedEpicRepo.split('/');
-      epicService = new EpicService(github, owner, repo);
-    }
-
-    setState({
-      pat: token,
-      epicRepo: storedEpicRepo,
-      github,
-      epicService,
-      user,
-      isLoading: false,
-    });
-
-    return true;
   };
 
   const setEpicRepo = (repo: string) => {
@@ -112,8 +131,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     let epicService: EpicService | null = null;
     if (state.github && repo) {
-      const [owner, repoName] = repo.split('/');
-      epicService = new EpicService(state.github, owner, repoName);
+      const parts = repo.split('/');
+      if (parts.length === 2) {
+        const [owner, repoName] = parts;
+        epicService = new EpicService(state.github, owner, repoName);
+      }
     }
 
     setState({
