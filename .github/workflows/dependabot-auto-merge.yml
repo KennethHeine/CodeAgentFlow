@@ -65,8 +65,18 @@ jobs:
             });
             core.setOutput('pr-title', prDetails.title);
 
-      - name: Enable auto-merge for Dependabot PRs
-        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "${{ github.repository }}"
+      - name: Merge Dependabot PR
+        id: merge
+        run: |
+          # Try auto-merge first; if it fails (e.g., no branch protection rules
+          # or PR is already in clean status), fall back to a direct merge.
+          if gh pr merge --auto --squash "$PR_NUMBER" --repo "${{ github.repository }}"; then
+            echo "merge-method=auto-merge" >> "$GITHUB_OUTPUT"
+          else
+            echo "Auto-merge not available, merging directly..."
+            gh pr merge --squash "$PR_NUMBER" --repo "${{ github.repository }}"
+            echo "merge-method=direct" >> "$GITHUB_OUTPUT"
+          fi
         env:
           PR_NUMBER: ${{ steps.pr-info.outputs.pr-number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,4 +87,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**PR:** ${{ steps.pr-info.outputs.pr-title }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Auto-merge enabled with squash strategy." >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.merge.outputs.merge-method }}" = "direct" ]; then
+            echo "✅ PR merged directly with squash strategy." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Auto-merge enabled with squash strategy." >> $GITHUB_STEP_SUMMARY
+          fi
