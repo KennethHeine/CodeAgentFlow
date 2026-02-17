@@ -90,6 +90,10 @@ scripts/            # Azure provisioning scripts
 - **Deploy Production** (`deploy-production.yml`) — Deploys to production on push to `main`
 - **Dependabot** — Daily npm updates and weekly GitHub Actions updates, with auto-merge on passing CI
 
+## Known Issues
+
+- **`eslint-plugin-react-hooks` canary version** — ESLint 10 is used in this project, but the latest stable release of `eslint-plugin-react-hooks` (v7.0.1) only supports ESLint up to v9. Until the React team publishes a stable release with ESLint 10 support, this project uses the canary version of the plugin. Track progress at [facebook/react#35758](https://github.com/facebook/react/issues/35758).
+
 ## Epic Repo Structure
 
 Epics are stored as Markdown files in a user-selected GitHub repository:
