@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { ExternalLink, FileText, Target, ClipboardList, ListChecks, CheckCircle, Circle, Clock, GitPullRequest, RefreshCw, FolderOpen } from 'lucide-react';
 import type { Epic } from '../../types';
 
@@ -13,14 +13,15 @@ type DetailTab = 'overview' | 'goal' | 'requirements' | 'plan' | 'tasks';
 
 export function EpicDetail({ epic, loading, epicRepo, onRefresh }: EpicDetailProps) {
   const [activeTab, setActiveTab] = useState<DetailTab>('overview');
+  const prevSlugRef = useRef(epic?.slug);
+  if (prevSlugRef.current !== epic?.slug) {
+    prevSlugRef.current = epic?.slug;
+    setActiveTab('overview');
+  }
 
   const handleTabChange = useCallback((tab: DetailTab) => {
     setActiveTab(tab);
   }, []);
-
-  useEffect(() => {
-    setActiveTab('overview');
-  }, [epic?.slug]);
 
   if (loading) {
     return (
