@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   getStorageItem,
   setStorageItem,
@@ -15,6 +15,7 @@ describe('storage utils', () => {
 
   afterEach(() => {
     localStorage.clear();
+    vi.useRealTimers();
   });
 
   describe('setStorageItem / getStorageItem', () => {
@@ -33,9 +34,10 @@ describe('storage utils', () => {
       expect(getStorageItem('no-such-key')).toBeNull();
     });
 
-    it('returns null for expired items', async () => {
+    it('returns null for expired items', () => {
+      vi.useFakeTimers();
       setStorageItem('expire-key', 'value', 1); // 1ms TTL
-      await new Promise((r) => setTimeout(r, 10));
+      vi.advanceTimersByTime(2);
       expect(getStorageItem('expire-key')).toBeNull();
     });
 
