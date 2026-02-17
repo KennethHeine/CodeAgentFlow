@@ -62,21 +62,26 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "✓ Resource group created" -ForegroundColor Green
 Write-Host ""
 
-# Create Static Web App
-Write-Host "Creating Azure Static Web App '$AppName'..."
-az staticwebapp create `
-    --name $AppName `
-    --resource-group $ResourceGroup `
-    --location $Location `
-    --sku $Sku `
-    --output table
+# Create Static Web App (idempotent — skip if already exists)
+Write-Host "Checking if Static Web App '$AppName' already exists..."
+$null = az staticwebapp show --name $AppName --resource-group $ResourceGroup 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✓ Static Web App already exists, skipping creation" -ForegroundColor Yellow
+} else {
+    Write-Host "Creating Azure Static Web App '$AppName'..."
+    az staticwebapp create `
+        --name $AppName `
+        --resource-group $ResourceGroup `
+        --location $Location `
+        --sku $Sku `
+        --output table
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Error: Failed to create Static Web App" -ForegroundColor Red
-    exit 1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Error: Failed to create Static Web App" -ForegroundColor Red
+        exit 1
+    }
+    Write-Host "✓ Static Web App created" -ForegroundColor Green
 }
-
-Write-Host "✓ Static Web App created" -ForegroundColor Green
 Write-Host ""
 
 # Get the deployment token

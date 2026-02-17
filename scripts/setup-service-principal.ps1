@@ -4,11 +4,9 @@
 
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
-    [string]$GitHubOrg,
+    [string]$GitHubOrg = "KennethHeine",
     
-    [Parameter(Mandatory = $true)]
-    [string]$GitHubRepo,
+    [string]$GitHubRepo = "CodeAgentFlow",
     
     [string]$ResourceGroup = "codeagentflow-rg",
     [string]$AppName = "codeagentflow-app",
@@ -42,10 +40,11 @@ try {
 # Check if user is logged in
 Write-Host "Checking Azure CLI authentication..."
 try {
-    $accountInfo = az account show 2>&1 | ConvertFrom-Json
+    $accountJson = az account show --output json 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw "Not authenticated"
     }
+    $accountInfo = $accountJson | ConvertFrom-Json
     $subscriptionId = $accountInfo.id
     $tenantId = $accountInfo.tenantId
 } catch {
@@ -81,34 +80,25 @@ Write-Host ""
 
 # Create or get service principal
 Write-Host "Creating service principal '$ServicePrincipalName'..."
-$spJson = az ad sp create-for-rbac `
+az ad sp create-for-rbac `
     --name $ServicePrincipalName `
     --role contributor `
-    --scopes "/subscriptions/$subscriptionId/resourceGroups/$ResourceGroup" `
-    --sdk-auth 2>&1
+    --scopes "/subscriptions/$subscriptionId/resourceGroups/$ResourceGroup" | Out-Null
 
 if ($LASTEXITCODE -ne 0) {
-    # SP might already exist, try to get it
-    Write-Host "Service principal might already exist. Checking..."
-    $spInfo = az ad sp list --display-name $ServicePrincipalName 2>&1 | ConvertFrom-Json
-    
-    if ($spInfo.Count -eq 0) {
-        Write-Host "Error: Failed to create service principal" -ForegroundColor Red
-        exit 1
-    }
-    
-    $appId = $spInfo[0].appId
-    $objectId = $spInfo[0].id
-    Write-Host "✓ Using existing service principal" -ForegroundColor Green
-} else {
-    $spData = $spJson | ConvertFrom-Json
-    $appId = $spData.clientId
-    
-    # Get object ID
-    $spInfo = az ad sp show --id $appId 2>&1 | ConvertFrom-Json
-    $objectId = $spInfo.id
-    Write-Host "✓ Service principal created" -ForegroundColor Green
+    Write-Host "Service principal might already exist. Checking..." -ForegroundColor Yellow
 }
+
+# Retrieve appId and objectId via --query to avoid JSON parsing issues
+$appId = az ad sp list --display-name $ServicePrincipalName --query "[0].appId" --output tsv 2>&1
+$objectId = az ad sp list --display-name $ServicePrincipalName --query "[0].id" --output tsv 2>&1
+
+if (-not $appId) {
+    Write-Host "Error: Could not retrieve service principal App ID" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "✓ Service principal ready" -ForegroundColor Green
 
 Write-Host "App ID (Client ID): $appId"
 Write-Host "Object ID: $objectId"
@@ -130,11 +120,12 @@ $federatedCredentialMain = @"
 }
 "@
 
-$federatedCredentialMain | Out-File -FilePath "federated-credential-main.json" -Encoding utf8
+$fcMainPath = Join-Path $env:TEMP "federated-credential-main.json"
+$federatedCredentialMain | Out-File -FilePath $fcMainPath -Encoding utf8
 
 az ad app federated-credential create `
     --id $appId `
-    --parameters "federated-credential-main.json" 2>&1
+    --parameters $fcMainPath 2>&1
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✓ Federated credential created for main branch" -ForegroundColor Green
@@ -155,11 +146,12 @@ $federatedCredentialPR = @"
 }
 "@
 
-$federatedCredentialPR | Out-File -FilePath "federated-credential-pr.json" -Encoding utf8
+$fcPRPath = Join-Path $env:TEMP "federated-credential-pr.json"
+$federatedCredentialPR | Out-File -FilePath $fcPRPath -Encoding utf8
 
 az ad app federated-credential create `
     --id $appId `
-    --parameters "federated-credential-pr.json" 2>&1
+    --parameters $fcPRPath 2>&1
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✓ Federated credential created for pull requests" -ForegroundColor Green
@@ -168,8 +160,8 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 # Clean up temporary files
-Remove-Item -Path "federated-credential-main.json" -ErrorAction SilentlyContinue
-Remove-Item -Path "federated-credential-pr.json" -ErrorAction SilentlyContinue
+Remove-Item -Path $fcMainPath -ErrorAction SilentlyContinue
+Remove-Item -Path $fcPRPath -ErrorAction SilentlyContinue
 Write-Host ""
 
 # Assign Website Contributor role if Static Web App exists
