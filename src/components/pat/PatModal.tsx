@@ -4,10 +4,12 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAuthStore } from '@/stores/auth';
+import { useUIStore } from '@/stores/ui';
 import { Shield, Key, Eye, EyeOff } from 'lucide-react';
 
 export function PatModal() {
   const { isAuthenticated, isValidating, error, setToken } = useAuthStore();
+  const { demoMode } = useUIStore();
   const [token, setTokenValue] = useState('');
   const [showToken, setShowToken] = useState(false);
 
@@ -46,17 +48,19 @@ export function PatModal() {
             <Input
               id="pat-token"
               label="GitHub Personal Access Token"
-              type={showToken ? 'text' : 'password'}
-              value={token}
+              type={showToken && !demoMode ? 'text' : 'password'}
+              value={demoMode ? 'ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' : token}
               onChange={e => setTokenValue(e.target.value)}
               placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
               error={error ?? undefined}
               autoFocus
+              disabled={demoMode}
             />
             <button
               type="button"
               onClick={() => setShowToken(!showToken)}
               className="absolute right-3 top-[34px] text-gray-500 hover:text-gray-300 transition-colors"
+              disabled={demoMode}
             >
               {showToken ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>

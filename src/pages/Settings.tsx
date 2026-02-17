@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useEpicStore } from '@/stores/epic';
 import { useAuthStore } from '@/stores/auth';
+import { useUIStore } from '@/stores/ui';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { listRepos } from '@/services/github';
@@ -15,12 +16,15 @@ import {
   RefreshCw,
   Check,
   FolderGit2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export function Settings() {
   const { epicRepoFullName, setEpicRepo } = useEpicStore();
   const { login, logout } = useAuthStore();
+  const { demoMode, toggleDemoMode } = useUIStore();
 
   const [repoInput, setRepoInput] = useState(epicRepoFullName);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -145,7 +149,7 @@ export function Settings() {
             <h2 className="font-semibold text-gray-200">Authentication</h2>
           </div>
           <p className="text-sm text-gray-400 mb-2">
-            Signed in as <strong className="text-gray-200">{login}</strong>.
+            Signed in as <strong className="text-gray-200">{demoMode ? 'demo-user' : login}</strong>.
             Your PAT is stored in browser localStorage.
           </p>
           <p className="text-xs text-yellow-500/80 mb-4">
@@ -155,6 +159,27 @@ export function Settings() {
           <Button variant="danger" onClick={logout}>
             <Key size={14} />
             Disconnect &amp; clear token
+          </Button>
+        </div>
+
+        {/* Demo Mode */}
+        <div className="bg-surface-1 border border-border-default rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            {demoMode ? <EyeOff size={16} className="text-brand-400" /> : <Eye size={16} className="text-brand-400" />}
+            <h2 className="font-semibold text-gray-200">Demo Mode</h2>
+          </div>
+          <p className="text-sm text-gray-400 mb-4">
+            Enable demo mode to hide sensitive information (PAT tokens, usernames) when taking screenshots
+            or recording demos. This mode masks your authentication details with placeholder values.
+          </p>
+          <Button
+            variant={demoMode ? 'primary' : 'secondary'}
+            onClick={() => {
+              toggleDemoMode();
+              toast.success(demoMode ? 'Demo mode disabled' : 'Demo mode enabled');
+            }}
+          >
+            {demoMode ? <><EyeOff size={14} /> Demo Mode: ON</> : <><Eye size={14} /> Demo Mode: OFF</>}
           </Button>
         </div>
 
@@ -181,6 +206,7 @@ export function Settings() {
             {[
               ['Ctrl+K / ?', 'Command palette'],
               ['Ctrl+B', 'Toggle sidebar'],
+              ['Ctrl+Shift+D', 'Toggle demo mode'],
               ['G then D', 'Go to Dashboard'],
               ['G then E', 'Go to Epics'],
               ['G then S', 'Go to Settings'],

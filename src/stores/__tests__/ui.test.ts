@@ -7,6 +7,7 @@ describe('useUIStore', () => {
     useUIStore.setState({
       sidebarOpen: true,
       commandPaletteOpen: false,
+      demoMode: false,
     });
   });
 
@@ -16,6 +17,10 @@ describe('useUIStore', () => {
 
   it('has command palette closed by default', () => {
     expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it('has demo mode disabled by default', () => {
+    expect(useUIStore.getState().demoMode).toBe(false);
   });
 
   it('toggles sidebar', () => {
@@ -48,5 +53,21 @@ describe('useUIStore', () => {
 
     useUIStore.getState().setCommandPaletteOpen(false);
     expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it('toggles demo mode', () => {
+    useUIStore.getState().toggleDemoMode();
+    expect(useUIStore.getState().demoMode).toBe(true);
+
+    useUIStore.getState().toggleDemoMode();
+    expect(useUIStore.getState().demoMode).toBe(false);
+  });
+
+  it('sets demo mode state directly', () => {
+    useUIStore.getState().setDemoMode(true);
+    expect(useUIStore.getState().demoMode).toBe(true);
+
+    useUIStore.getState().setDemoMode(false);
+    expect(useUIStore.getState().demoMode).toBe(false);
   });
 });
