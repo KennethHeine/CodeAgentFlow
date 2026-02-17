@@ -1,5 +1,5 @@
 import { GitBranch, ExternalLink, LogOut, Settings } from 'lucide-react';
-import type { GitHubUser } from '../types';
+import type { GitHubUser } from '../../types';
 
 interface HeaderProps {
   user: GitHubUser | null;

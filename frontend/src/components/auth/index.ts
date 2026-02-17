@@ -1,0 +1,1 @@
+export { PatModal } from './PatModal';

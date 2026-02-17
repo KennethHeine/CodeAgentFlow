@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle, FileText, ListChecks, Target, ClipboardList } from 'lucide-react';
-import { slugify } from '../utils';
-import type { EpicCreationState, EpicStep, TaskDraft, SubtaskDraft } from '../types';
+import { slugify } from '../../utils';
+import type { EpicCreationState, EpicStep, TaskDraft, SubtaskDraft } from '../../types';
 
 interface EpicWizardProps {
   onComplete: (state: EpicCreationState) => void;

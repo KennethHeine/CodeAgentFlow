@@ -65,7 +65,11 @@ npm run build && npm run lint && npm test
     │   ├── main.tsx      # React entry point
     │   ├── App.tsx       # Root component (PAT gate → repo selector → IDE layout)
     │   ├── App.css       # Global styles
-    │   ├── components/   # React UI components (EpicDetail, EpicWizard, Header, PatModal, RepoSelector, Sidebar)
+    │   ├── components/   # React UI components, grouped by feature
+    │   │   ├── auth/     # Authentication: PatModal
+    │   │   ├── epic/     # Epic management: EpicDetail, EpicWizard
+    │   │   ├── layout/   # App shell: Header, Sidebar
+    │   │   └── repo/     # Repository selection: RepoSelector
     │   ├── hooks/        # Custom hooks (useAuth, useEpics, useKeyboardShortcut)
     │   ├── services/     # GitHub API client (Octokit wrapper)
     │   ├── types/        # TypeScript type definitions (epic.ts, github.ts)
