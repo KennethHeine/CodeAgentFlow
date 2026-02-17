@@ -62,7 +62,7 @@ jobs:
         run: npm run test:e2e
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v6
         with:
           name: production-build
           path: dist
