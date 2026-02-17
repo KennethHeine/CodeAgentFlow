@@ -61,12 +61,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     const login = localStorage.getItem('caf:login');
 
     if (token && login) {
+      // Optimistically restore so the UI renders immediately
       initOctokit(token);
-      set({
-        token,
-        login,
-        isAuthenticated: true,
-      });
+      set({ token, login, isAuthenticated: true });
+
+      // Re-validate in the background; if the token was revoked, log out
+      const result = await validateToken(token);
+      if (!result.valid) {
+        localStorage.removeItem('caf:pat');
+        localStorage.removeItem('caf:login');
+        clearOctokit();
+        set({
+          token: null,
+          login: null,
+          isAuthenticated: false,
+          error: 'Your GitHub token has expired or been revoked. Please reconnect.',
+        });
+      }
     }
   },
 }));

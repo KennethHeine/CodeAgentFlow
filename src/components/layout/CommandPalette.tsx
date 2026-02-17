@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '@/stores/ui';
 import { useEpicStore } from '@/stores/epic';
@@ -29,6 +29,15 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const executingRef = useRef(false);
+
+  const executeAction = useCallback((action: () => void) => {
+    if (executingRef.current) return;
+    executingRef.current = true;
+    action();
+    setCommandPaletteOpen(false);
+    requestAnimationFrame(() => { executingRef.current = false; });
+  }, [setCommandPaletteOpen]);
 
   const items: PaletteItem[] = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Go to Dashboard', shortcut: 'G D', action: () => navigate('/'), section: 'Navigation' },
@@ -75,8 +84,7 @@ export function CommandPalette() {
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (filtered[selectedIndex]) {
-          filtered[selectedIndex].action();
-          setCommandPaletteOpen(false);
+          executeAction(filtered[selectedIndex].action);
         }
       } else if (e.key === 'Escape') {
         setCommandPaletteOpen(false);
@@ -85,7 +93,7 @@ export function CommandPalette() {
 
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [commandPaletteOpen, filtered, selectedIndex, setCommandPaletteOpen]);
+  }, [commandPaletteOpen, filtered, selectedIndex, setCommandPaletteOpen, executeAction]);
 
   if (!commandPaletteOpen) return null;
 
@@ -138,10 +146,7 @@ export function CommandPalette() {
                           ? 'bg-brand-600/10 text-brand-300'
                           : 'text-gray-300 hover:bg-surface-2',
                       )}
-                      onClick={() => {
-                        item.action();
-                        setCommandPaletteOpen(false);
-                      }}
+                      onClick={() => executeAction(item.action)}
                       onMouseEnter={() => setSelectedIndex(idx)}
                     >
                       <item.icon size={16} className="shrink-0 text-gray-500" />

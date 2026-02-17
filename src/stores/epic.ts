@@ -124,7 +124,10 @@ export const useEpicStore = create<EpicState>((set, get) => ({
       const tasks: Task[] = [];
       try {
         const taskFiles = await github.listDirectory(repo.owner, repo.repo, `${basePath}/tasks`);
-        const mdFiles = taskFiles.filter(f => f.name.endsWith('.md')).sort((a, b) => a.name.localeCompare(b.name));
+        // Only process files matching the expected NNN-slug.md pattern
+        const mdFiles = taskFiles
+          .filter(f => /^\d{3}-.+\.md$/.test(f.name))
+          .sort((a, b) => a.name.localeCompare(b.name));
 
         for (const file of mdFiles) {
           const fileContent = await github.getFileContent(repo.owner, repo.repo, file.path);
@@ -238,32 +241,41 @@ export const useEpicStore = create<EpicState>((set, get) => ({
       case 'tasks': {
         // Parse tasks from content and create individual files
         const taskLines = content.split('\n---\n');
+        const errors: string[] = [];
         for (let i = 0; i < taskLines.length; i++) {
           const taskContent = taskLines[i].trim();
           if (!taskContent) continue;
 
-          const parsed = parseTaskMarkdown(taskContent);
-          const taskSlug = slugify(parsed.title || `task-${i + 1}`);
-          const taskPath = `${basePath}/tasks/${buildTaskFilename(i + 1, taskSlug)}`;
-          const taskMd = generateTaskMarkdown(parsed);
-
-          let sha: string | undefined;
           try {
-            const existing = await github.getFileContent(repo.owner, repo.repo, taskPath);
-            sha = existing.sha;
-          } catch { /* new file */ }
+            const parsed = parseTaskMarkdown(taskContent);
+            const taskSlug = slugify(parsed.title || `task-${i + 1}`);
+            const taskPath = `${basePath}/tasks/${buildTaskFilename(i + 1, taskSlug)}`;
+            const taskMd = generateTaskMarkdown(parsed);
 
-          await github.createOrUpdateFile(
-            repo.owner,
-            repo.repo,
-            taskPath,
-            taskMd,
-            `docs: update task ${padTaskNumber(i + 1)} for "${epicName}"`,
-            sha,
-          );
+            let sha: string | undefined;
+            try {
+              const existing = await github.getFileContent(repo.owner, repo.repo, taskPath);
+              sha = existing.sha;
+            } catch { /* new file */ }
+
+            await github.createOrUpdateFile(
+              repo.owner,
+              repo.repo,
+              taskPath,
+              taskMd,
+              `docs: update task ${padTaskNumber(i + 1)} for "${epicName}"`,
+              sha,
+            );
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Unknown error';
+            errors.push(`Task ${padTaskNumber(i + 1)}: ${msg}`);
+          }
         }
-        // Reload epic detail
+        // Reload epic detail even if some tasks failed, so partial progress is visible
         await get().loadEpicDetail(epicId);
+        if (errors.length > 0) {
+          throw new Error(`Some tasks failed to save:\n${errors.join('\n')}`);
+        }
         return;
       }
     }

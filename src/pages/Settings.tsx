@@ -37,7 +37,12 @@ export function Settings() {
       const r = await listRepos();
       setRepos(r);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to load repos');
+      const message = err instanceof Error ? err.message : 'Failed to load repos';
+      if (message.includes('401') || message.includes('Bad credentials')) {
+        toast.error('Your PAT may lack the "repo" scope. Please update your token with the required permissions.');
+      } else {
+        toast.error(message);
+      }
     } finally {
       setLoadingRepos(false);
     }
@@ -139,9 +144,13 @@ export function Settings() {
             <Key size={16} className="text-yellow-400" />
             <h2 className="font-semibold text-gray-200">Authentication</h2>
           </div>
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-sm text-gray-400 mb-2">
             Signed in as <strong className="text-gray-200">{login}</strong>.
             Your PAT is stored in browser localStorage.
+          </p>
+          <p className="text-xs text-yellow-500/80 mb-4">
+            Note: localStorage is not encrypted. Your token could be accessed by browser extensions
+            or XSS vulnerabilities. Only use tokens with the minimum required scopes.
           </p>
           <Button variant="danger" onClick={logout}>
             <Key size={14} />

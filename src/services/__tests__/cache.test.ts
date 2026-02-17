@@ -64,6 +64,35 @@ describe('CacheService', () => {
     expect(svc.get('corrupt')).toBeNull();
   });
 
+  it('removes entries by prefix', () => {
+    svc.set('file:abc:main', 'v1');
+    svc.set('file:abc:dev', 'v2');
+    svc.set('file:xyz:main', 'v3');
+
+    svc.removeByPrefix('file:abc');
+
+    expect(svc.get('file:abc:main')).toBeNull();
+    expect(svc.get('file:abc:dev')).toBeNull();
+    expect(svc.get('file:xyz:main')).toBe('v3');
+  });
+
+  it('logs warning when localStorage quota is exceeded', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const setItemOriginal = Storage.prototype.setItem;
+    // Both the initial write and the retry after clearExpired must throw
+    Storage.prototype.setItem = function () {
+      throw new DOMException('QuotaExceededError');
+    };
+
+    svc.set('big-key', 'data');
+
+    Storage.prototype.setItem = setItemOriginal;
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('localStorage quota exceeded'),
+    );
+    warnSpy.mockRestore();
+  });
+
   it('uses prefix isolation', () => {
     const svc2 = new CacheService('other');
     svc.set('shared', 'from-test');

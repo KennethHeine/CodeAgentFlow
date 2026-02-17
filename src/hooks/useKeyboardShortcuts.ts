@@ -32,14 +32,19 @@ export function useKeyboardShortcuts() {
       // G then E -> Go to epics
       // G then S -> Go to settings
       if (e.key === 'g' && !e.metaKey && !e.ctrlKey) {
+        let timeoutId: number;
         const handleSecondKey = (e2: KeyboardEvent) => {
           document.removeEventListener('keydown', handleSecondKey);
+          clearTimeout(timeoutId);
           if (e2.key === 'd') navigate('/');
           else if (e2.key === 'e') navigate('/epics');
           else if (e2.key === 's') navigate('/settings');
         };
         document.addEventListener('keydown', handleSecondKey, { once: true });
-        setTimeout(() => document.removeEventListener('keydown', handleSecondKey), 500);
+        timeoutId = window.setTimeout(
+          () => document.removeEventListener('keydown', handleSecondKey),
+          500,
+        );
         return;
       }
 

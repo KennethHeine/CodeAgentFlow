@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
@@ -13,6 +13,15 @@ interface ModalProps {
 
 export function Modal({ open, onClose, title, children, className, closable = true }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const closingRef = useRef(false);
+
+  const handleClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    onClose?.();
+    // Reset after a tick so back-to-back close attempts are idempotent
+    requestAnimationFrame(() => { closingRef.current = false; });
+  }, [onClose]);
 
   useEffect(() => {
     if (open) {
@@ -26,11 +35,11 @@ export function Modal({ open, onClose, title, children, className, closable = tr
   useEffect(() => {
     if (!open || !closable) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose?.();
+      if (e.key === 'Escape') handleClose();
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [open, closable, onClose]);
+  }, [open, closable, handleClose]);
 
   if (!open) return null;
 
@@ -39,7 +48,7 @@ export function Modal({ open, onClose, title, children, className, closable = tr
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={(e) => {
-        if (closable && e.target === overlayRef.current) onClose?.();
+        if (closable && e.target === overlayRef.current) handleClose();
       }}
     >
       <div

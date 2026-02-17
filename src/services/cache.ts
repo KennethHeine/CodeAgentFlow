@@ -46,13 +46,25 @@ export class CacheService {
       try {
         localStorage.setItem(this.key(k), JSON.stringify(entry));
       } catch {
-        // Still full, give up
+        console.warn(`[CacheService] localStorage quota exceeded. Unable to cache key "${k}".`);
       }
     }
   }
 
   remove(k: string): void {
     localStorage.removeItem(this.key(k));
+  }
+
+  removeByPrefix(prefix: string): void {
+    const fullPrefix = this.key(prefix);
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith(fullPrefix)) {
+        keys.push(key);
+      }
+    }
+    keys.forEach(k => localStorage.removeItem(k));
   }
 
   clearAll(): void {

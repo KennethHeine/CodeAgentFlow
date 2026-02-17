@@ -74,7 +74,7 @@
   <!-- LocalStorage -->
   <rect x="700" y="430" width="220" height="100" rx="12" fill="#111118" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 2"/>
   <text x="810" y="458" font-family="system-ui" font-size="14" fill="#94a3b8" font-weight="600" text-anchor="middle">localStorage (Cache)</text>
-  <text x="720" y="486" font-family="system-ui" font-size="10" fill="#6b7280">• PAT token (encrypted at rest)</text>
+  <text x="720" y="486" font-family="system-ui" font-size="10" fill="#6b7280">• PAT token (plain text)</text>
   <text x="720" y="502" font-family="system-ui" font-size="10" fill="#6b7280">• API response cache (5m TTL)</text>
   <text x="720" y="518" font-family="system-ui" font-size="10" fill="#6b7280">• UI preferences</text>
 

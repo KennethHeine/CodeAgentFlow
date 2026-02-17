@@ -100,12 +100,12 @@ export async function createOrUpdateFile(
     repo,
     path,
     message,
-    content: btoa(unescape(encodeURIComponent(content))),
+    content: btoa(String.fromCodePoint(...new TextEncoder().encode(content))),
     sha,
   });
 
-  // Invalidate cache
-  cache.remove(`file:${owner}/${repo}/${path}:default`);
+  // Invalidate cache for all refs of this file and its parent directory
+  cache.removeByPrefix(`file:${owner}/${repo}/${path}:`);
   cache.remove(`dir:${owner}/${repo}:${path.split('/').slice(0, -1).join('/')}`);
 
   return data.content?.sha ?? '';
@@ -133,7 +133,7 @@ export async function listDirectory(owner: string, repo: string, path: string): 
     cache.set(cacheKey, items, 60 * 1000);
     return items;
   } catch (err: unknown) {
-    if (err && typeof err === 'object' && 'status' in err && (err as { status: number }).status === 404) {
+    if (err && typeof err === 'object' && 'status' in err && (err as Record<string, unknown>).status === 404) {
       return [];
     }
     throw err;

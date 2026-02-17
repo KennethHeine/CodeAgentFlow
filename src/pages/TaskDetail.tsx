@@ -31,7 +31,9 @@ export function TaskDetail() {
     if (epicId && !currentEpic) {
       loadEpicDetail(epicId);
     }
-  }, [epicId, currentEpic, loadEpicDetail]);
+    // loadEpicDetail is a stable Zustand store function, omitted from deps intentionally
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [epicId, currentEpic]);
 
   const task = currentEpic?.tasks.find(t => t.id === taskId);
   const repo = splitRepoFullName(epicRepoFullName);
@@ -104,11 +106,12 @@ export function TaskDetail() {
             href={task.githubIssueUrl}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`View issue #${task.githubIssueNumber} on GitHub (opens in new tab)`}
             className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-brand-400 transition-colors bg-surface-1 border border-border-default rounded-lg px-3 py-1.5"
           >
-            <GitBranch size={14} />
+            <GitBranch size={14} aria-hidden="true" />
             Issue #{task.githubIssueNumber}
-            <ExternalLink size={11} />
+            <ExternalLink size={11} aria-hidden="true" />
           </a>
         )}
         {task.githubPrUrl && (
@@ -116,11 +119,12 @@ export function TaskDetail() {
             href={task.githubPrUrl}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`View pull request #${task.githubPrNumber} on GitHub (opens in new tab)`}
             className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-brand-400 transition-colors bg-surface-1 border border-border-default rounded-lg px-3 py-1.5"
           >
-            <GitPullRequest size={14} />
+            <GitPullRequest size={14} aria-hidden="true" />
             PR #{task.githubPrNumber}
-            <ExternalLink size={11} />
+            <ExternalLink size={11} aria-hidden="true" />
           </a>
         )}
         {repoUrl && (
@@ -128,11 +132,12 @@ export function TaskDetail() {
             href={`${repoUrl}/blob/main/${currentEpic.path}/tasks/${String(task.number).padStart(3, '0')}-${task.slug}.md`}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="View task spec on GitHub (opens in new tab)"
             className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-brand-400 transition-colors bg-surface-1 border border-border-default rounded-lg px-3 py-1.5"
           >
-            <FileText size={14} />
+            <FileText size={14} aria-hidden="true" />
             View spec
-            <ExternalLink size={11} />
+            <ExternalLink size={11} aria-hidden="true" />
           </a>
         )}
       </div>
