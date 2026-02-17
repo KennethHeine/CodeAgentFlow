@@ -27,11 +27,27 @@ npm run build && npm run test:e2e  # Run E2E tests (requires build)
 src/
 ├── utils/
 │   ├── slugify.ts
-│   └── slugify.test.ts      ← unit test next to source
+│   ├── slugify.test.ts       ← unit test next to source
+│   ├── storage.ts
+│   ├── storage.test.ts
+│   ├── templates.ts
+│   └── templates.test.ts
 ├── components/
-│   └── auth/
-│       ├── PatModal.tsx
-│       └── PatModal.test.tsx ← component test next to source
+│   ├── auth/
+│   │   ├── PatModal.tsx
+│   │   └── PatModal.test.tsx ← component test next to source
+│   ├── epic/
+│   │   ├── EpicDetail.tsx
+│   │   └── EpicDetail.test.tsx
+│   └── repo/
+│       ├── RepoSelector.tsx
+│       └── RepoSelector.test.tsx
+├── hooks/
+│   ├── useKeyboardShortcut.ts
+│   └── useKeyboardShortcut.test.ts
+├── services/
+│   ├── github.ts
+│   └── github.test.ts
 ├── test/
 │   ├── setup.ts              ← global test setup
 │   └── fixtures.ts           ← shared factories/fixtures

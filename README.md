@@ -54,28 +54,45 @@ npm run dev
 ## Testing
 
 ```bash
-# Unit tests (Vitest)
+# Unit tests (Vitest — 81 tests across 8 files)
 npm test
 
-# E2E tests (Playwright)
+# E2E tests (Playwright — Chromium)
 npm run build
 npm run test:e2e
 ```
+
+See [TESTING.md](TESTING.md) for conventions, fixtures, and best practices.
 
 ## Project Structure
 
 ```
 src/
-  components/   # React UI components
-  hooks/        # Custom React hooks
-  services/     # GitHub API client (Octokit)
-  types/        # TypeScript type definitions
-  utils/        # Utility functions (slugify, templates, storage)
-  test/         # Test setup
-e2e/            # Playwright E2E tests
+  components/       # React UI components, grouped by feature
+    auth/           # PAT authentication (PatModal)
+    epic/           # Epic management (EpicDetail, EpicWizard)
+    layout/         # App shell (Header, Sidebar)
+    repo/           # Repository selection (RepoSelector)
+  hooks/            # Custom React hooks (useAuth, useEpics, useKeyboardShortcut)
+  services/         # GitHub API client (Octokit wrapper)
+  types/            # TypeScript type definitions (epic.ts, github.ts)
+  utils/            # Utility functions (slugify, storage, templates)
+  test/             # Test setup and shared fixtures
+e2e/                # Playwright E2E tests
+docs/images/        # Screenshots for README
+scripts/            # Azure provisioning scripts
 ```
 
+## CI/CD
+
+- **CI** (`ci.yml`) — Runs build, unit tests, and E2E tests on every pull request
+- **Deploy PR Preview** (`deploy-pr.yml`) — Deploys PR preview to Azure Static Web Apps
+- **Deploy Production** (`deploy-production.yml`) — Deploys to production on push to `main`
+- **Dependabot** — Daily npm updates and weekly GitHub Actions updates, with auto-merge on passing CI
+
 ## Epic Repo Structure
+
+Epics are stored as Markdown files in a user-selected GitHub repository:
 
 ```
 /epics/<epic-name>/

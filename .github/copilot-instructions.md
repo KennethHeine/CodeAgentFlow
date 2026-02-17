@@ -31,7 +31,7 @@ Run these commands before opening any PR:
 ```bash
 npm run build     # TypeScript compilation + Vite build
 npm run lint      # ESLint (flat config, TS + React rules)
-npm test          # Vitest unit tests (~50 tests, <5s)
+npm test          # Vitest unit tests (~81 tests, <5s)
 ```
 
 For UI changes that affect E2E flows:
@@ -48,6 +48,9 @@ npm run build && npm run test:e2e   # Playwright (Chromium)
 
 ## Documentation Expectations
 
+- **Always maintain documentation alongside code changes.** When you add, rename, or remove files, components, hooks, utilities, or tests — update the relevant docs immediately. This is not optional.
+- Docs to keep in sync: `README.md`, `AGENTS.md`, `TESTING.md`, `src/README.md`, `.github/copilot-instructions.md`.
+- Update test counts, project maps, file trees, and feature lists whenever they change.
 - Update `README.md` when adding features, changing commands, or modifying project structure.
 - Update `AGENTS.md` when changing build commands, project layout, or developer workflow.
 - Keep screenshots in `docs/images/` current if UI changes significantly.
