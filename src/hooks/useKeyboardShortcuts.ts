@@ -6,6 +6,7 @@ export function useKeyboardShortcuts() {
   const navigate = useNavigate();
   const toggleSidebar = useUIStore(s => s.toggleSidebar);
   const toggleCommandPalette = useUIStore(s => s.toggleCommandPalette);
+  const toggleDemoMode = useUIStore(s => s.toggleDemoMode);
 
   useEffect(() => {
     function handler(e: KeyboardEvent) {
@@ -25,6 +26,13 @@ export function useKeyboardShortcuts() {
       if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
         e.preventDefault();
         toggleSidebar();
+        return;
+      }
+
+      // Cmd/Ctrl + Shift + D -> Toggle demo mode
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'D') {
+        e.preventDefault();
+        toggleDemoMode();
         return;
       }
 
@@ -63,5 +71,5 @@ export function useKeyboardShortcuts() {
 
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [navigate, toggleSidebar, toggleCommandPalette]);
+  }, [navigate, toggleSidebar, toggleCommandPalette, toggleDemoMode]);
 }
