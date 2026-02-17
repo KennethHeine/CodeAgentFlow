@@ -4,13 +4,13 @@
 
 ## How This Repo Is Structured
 
-CodeAgentFlow is a React 19 + TypeScript SPA (single-page application) that lives entirely in the `frontend/` directory. There is no backend — all data comes from GitHub's API via `@octokit/rest` and is stored as Markdown files in a user-selected GitHub repository. Browser localStorage is used for session state (PAT, repo selection).
+CodeAgentFlow is a React 19 + TypeScript SPA (single-page application) at the repository root. There is no backend — all data comes from GitHub's API via `@octokit/rest` and is stored as Markdown files in a user-selected GitHub repository. Browser localStorage is used for session state (PAT, repo selection).
 
 Key entry points:
-- `frontend/src/main.tsx` → React root
-- `frontend/src/App.tsx` → Application shell (PAT gate → repo selector → IDE layout)
-- `frontend/src/services/github.ts` → All GitHub API interactions
-- `frontend/src/types/` → Shared TypeScript types
+- `src/main.tsx` → React root
+- `src/App.tsx` → Application shell (PAT gate → repo selector → IDE layout)
+- `src/services/github.ts` → All GitHub API interactions
+- `src/types/` → Shared TypeScript types
 
 ## Coding Conventions
 
@@ -26,10 +26,9 @@ Key entry points:
 
 ## Validation Checklist
 
-Run these commands from `frontend/` before opening any PR:
+Run these commands before opening any PR:
 
 ```bash
-cd frontend
 npm run build     # TypeScript compilation + Vite build
 npm run lint      # ESLint (flat config, TS + React rules)
 npm test          # Vitest unit tests (~50 tests, <5s)

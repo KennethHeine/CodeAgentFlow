@@ -1,6 +1,6 @@
 # Source Navigation Guide
 
-Quick reference for navigating the `frontend/src/` codebase.
+Quick reference for navigating the `src/` codebase.
 
 ## Entrypoints
 
@@ -64,4 +64,4 @@ Unit tests live alongside their source files:
 - `utils/storage.test.ts`
 - `utils/templates.test.ts`
 
-E2E tests live in `frontend/e2e/`.
+E2E tests live in `e2e/`.
