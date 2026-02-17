@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" fill="none">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="1200" y2="700">
+      <stop offset="0%" stop-color="#0a0a0f"/>
+      <stop offset="100%" stop-color="#111118"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bg4)" rx="12"/>
+
+  <!-- Sidebar hint -->
+  <rect x="0" y="0" width="60" height="700" fill="#111118"/>
+  <line x1="60" y1="0" x2="60" y2="700" stroke="#2e2e48" stroke-width="1"/>
+  <rect x="16" y="14" width="28" height="28" rx="8" fill="#4f46e5"/>
+
+  <!-- Breadcrumb -->
+  <text x="100" y="32" font-family="system-ui" font-size="12" fill="#94a3b8">Epics / User Auth System / Task #003</text>
+  <text x="100" y="54" font-family="system-ui" font-size="13" fill="#94a3b8">← Back to Epic</text>
+
+  <!-- Title -->
+  <text x="100" y="90" font-family="system-ui" font-size="22" fill="#f1f5f9" font-weight="700">Implement JWT Authentication Endpoints</text>
+  <rect x="100" y="100" width="66" height="22" rx="11" fill="rgba(168,85,247,0.1)"/>
+  <text x="110" y="115" font-family="system-ui" font-size="10" fill="#a855f7">PR Open</text>
+  <text x="180" y="115" font-family="monospace" font-size="12" fill="#6b7280">#003-implement-jwt-auth</text>
+
+  <!-- GitHub Links -->
+  <rect x="100" y="132" width="100" height="28" rx="8" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <text x="116" y="151" font-family="system-ui" font-size="11" fill="#94a3b8">Issue #42 ↗</text>
+
+  <rect x="212" y="132" width="86" height="28" rx="8" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <text x="228" y="151" font-family="system-ui" font-size="11" fill="#94a3b8">PR #45 ↗</text>
+
+  <rect x="310" y="132" width="96" height="28" rx="8" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <text x="326" y="151" font-family="system-ui" font-size="11" fill="#94a3b8">View spec ↗</text>
+
+  <!-- Description Card -->
+  <rect x="100" y="176" width="1060" height="100" rx="12" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <text x="124" y="204" font-family="system-ui" font-size="13" fill="#cbd5e1" font-weight="600">Description</text>
+  <text x="124" y="230" font-family="system-ui" font-size="13" fill="#94a3b8">Implement JWT-based authentication with login, register, refresh,</text>
+  <text x="124" y="250" font-family="system-ui" font-size="13" fill="#94a3b8">and logout endpoints. Include token validation middleware.</text>
+
+  <!-- Research Column -->
+  <rect x="100" y="292" width="520" height="240" rx="12" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <circle cx="130" cy="320" r="8" fill="rgba(96,165,250,0.2)"/>
+  <text x="126" y="324" font-family="system-ui" font-size="9" fill="#60a5fa">R</text>
+  <text x="146" y="324" font-family="system-ui" font-size="13" fill="#cbd5e1" font-weight="600">Research (2)</text>
+  <line x1="100" y1="340" x2="620" y2="340" stroke="#1e1e30" stroke-width="1"/>
+
+  <!-- Research item 1 (completed) -->
+  <circle cx="132" cy="368" r="8" fill="none" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="128" y="372" font-family="system-ui" font-size="10" fill="#4ade80">✓</text>
+  <text x="150" y="372" font-family="system-ui" font-size="13" fill="#e2e8f0">Compare JWT libraries (jsonwebtoken vs jose)</text>
+  <text x="150" y="390" font-family="system-ui" font-size="11" fill="#6b7280">Evaluate performance, bundle size, security</text>
+
+  <!-- Research item 2 -->
+  <circle cx="132" cy="420" r="8" fill="none" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="150" y="424" font-family="system-ui" font-size="13" fill="#e2e8f0">Research refresh token rotation patterns</text>
+  <text x="150" y="442" font-family="system-ui" font-size="11" fill="#6b7280">Review OWASP guidelines for token storage</text>
+
+  <!-- Work Column -->
+  <rect x="640" y="292" width="520" height="240" rx="12" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <circle cx="670" cy="320" r="8" fill="rgba(251,146,60,0.2)"/>
+  <text x="666" y="324" font-family="system-ui" font-size="9" fill="#fb923c">W</text>
+  <text x="686" y="324" font-family="system-ui" font-size="13" fill="#cbd5e1" font-weight="600">Work (3)</text>
+  <line x1="640" y1="340" x2="1160" y2="340" stroke="#1e1e30" stroke-width="1"/>
+
+  <!-- Work item 1 (completed) -->
+  <circle cx="672" cy="368" r="8" fill="none" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="668" y="372" font-family="system-ui" font-size="10" fill="#4ade80">✓</text>
+  <text x="690" y="372" font-family="system-ui" font-size="13" fill="#e2e8f0">Create auth controller with login/register</text>
+
+  <!-- Work item 2 -->
+  <circle cx="672" cy="410" r="8" fill="none" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="690" y="414" font-family="system-ui" font-size="13" fill="#e2e8f0">Add JWT middleware for protected routes</text>
+
+  <!-- Work item 3 -->
+  <circle cx="672" cy="450" r="8" fill="none" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="690" y="454" font-family="system-ui" font-size="13" fill="#e2e8f0">Write integration tests for auth flow</text>
+
+  <!-- Pipeline -->
+  <rect x="100" y="548" width="1060" height="100" rx="12" fill="#111118" stroke="#2e2e48" stroke-width="1"/>
+  <text x="124" y="580" font-family="system-ui" font-size="13" fill="#cbd5e1" font-weight="600">Orchestration Pipeline</text>
+
+  <!-- Pipeline stages -->
+  <rect x="130" y="596" width="64" height="24" rx="12" fill="#1a1a24"/>
+  <text x="139" y="612" font-family="system-ui" font-size="10" fill="#6b7280">Pending</text>
+  <line x1="200" y1="608" x2="230" y2="608" stroke="#2e2e48" stroke-width="1"/>
+
+  <rect x="236" y="596" width="90" height="24" rx="12" fill="#1a1a24"/>
+  <text x="245" y="612" font-family="system-ui" font-size="10" fill="#6b7280">Issue Created</text>
+  <line x1="332" y1="608" x2="362" y2="608" stroke="#2e2e48" stroke-width="1"/>
+
+  <rect x="368" y="596" width="96" height="24" rx="12" fill="#1a1a24"/>
+  <text x="377" y="612" font-family="system-ui" font-size="10" fill="#6b7280">Agent Running</text>
+  <line x1="470" y1="608" x2="500" y2="608" stroke="#2e2e48" stroke-width="1"/>
+
+  <rect x="506" y="596" width="66" height="24" rx="12" fill="rgba(168,85,247,0.1)" stroke="rgba(168,85,247,0.2)" stroke-width="1"/>
+  <text x="515" y="612" font-family="system-ui" font-size="10" fill="#a855f7">PR Open</text>
+  <line x1="578" y1="608" x2="608" y2="608" stroke="#2e2e48" stroke-width="1"/>
+
+  <rect x="614" y="596" width="70" height="24" rx="12" fill="#1a1a24"/>
+  <text x="623" y="612" font-family="system-ui" font-size="10" fill="#6b7280">In Review</text>
+  <line x1="690" y1="608" x2="720" y2="608" stroke="#2e2e48" stroke-width="1"/>
+
+  <rect x="726" y="596" width="60" height="24" rx="12" fill="#1a1a24"/>
+  <text x="735" y="612" font-family="system-ui" font-size="10" fill="#6b7280">Merged</text>
+</svg>

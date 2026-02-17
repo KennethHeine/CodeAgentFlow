@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" fill="none">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="1000" y2="600">
+      <stop offset="0%" stop-color="#0a0a0f"/>
+      <stop offset="100%" stop-color="#111118"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="600" fill="url(#bg5)" rx="12"/>
+
+  <text x="500" y="40" font-family="system-ui" font-size="20" fill="#f1f5f9" font-weight="700" text-anchor="middle">CodeAgentFlow Architecture</text>
+
+  <!-- Browser Box -->
+  <rect x="60" y="70" width="880" height="480" rx="16" fill="none" stroke="#2e2e48" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <text x="80" y="96" font-family="system-ui" font-size="12" fill="#6b7280">Browser (No Backend)</text>
+
+  <!-- React App -->
+  <rect x="100" y="110" width="280" height="180" rx="12" fill="#111118" stroke="#4f46e5" stroke-width="1.5"/>
+  <text x="240" y="138" font-family="system-ui" font-size="14" fill="#818cf8" font-weight="600" text-anchor="middle">React + TypeScript App</text>
+
+  <text x="120" y="166" font-family="system-ui" font-size="11" fill="#94a3b8">Pages:</text>
+  <text x="120" y="184" font-family="monospace" font-size="10" fill="#cbd5e1">Dashboard | Epics | Tasks</text>
+  <text x="120" y="200" font-family="monospace" font-size="10" fill="#cbd5e1">Settings | Create Epic</text>
+
+  <text x="120" y="224" font-family="system-ui" font-size="11" fill="#94a3b8">Components:</text>
+  <text x="120" y="242" font-family="monospace" font-size="10" fill="#cbd5e1">PAT Modal | Sidebar | Cmd Palette</text>
+  <text x="120" y="258" font-family="monospace" font-size="10" fill="#cbd5e1">Task Pipeline | Markdown Editor</text>
+
+  <!-- Zustand Store -->
+  <rect x="100" y="310" width="280" height="100" rx="12" fill="#111118" stroke="#22d3ee" stroke-width="1.5"/>
+  <text x="240" y="338" font-family="system-ui" font-size="14" fill="#22d3ee" font-weight="600" text-anchor="middle">Zustand State Stores</text>
+  <text x="120" y="366" font-family="monospace" font-size="10" fill="#cbd5e1">Auth Store (PAT, login)</text>
+  <text x="120" y="384" font-family="monospace" font-size="10" fill="#cbd5e1">Epic Store (epics, tasks, CRUD)</text>
+  <text x="120" y="402" font-family="monospace" font-size="10" fill="#cbd5e1">UI Store (sidebar, palette)</text>
+
+  <!-- Services -->
+  <rect x="440" y="110" width="200" height="180" rx="12" fill="#111118" stroke="#facc15" stroke-width="1.5"/>
+  <text x="540" y="138" font-family="system-ui" font-size="14" fill="#facc15" font-weight="600" text-anchor="middle">Service Layer</text>
+
+  <text x="460" y="168" font-family="monospace" font-size="10" fill="#cbd5e1">GitHub API Service</text>
+  <text x="466" y="186" font-family="system-ui" font-size="10" fill="#6b7280">• Octokit REST client</text>
+  <text x="466" y="202" font-family="system-ui" font-size="10" fill="#6b7280">• File CRUD operations</text>
+  <text x="466" y="218" font-family="system-ui" font-size="10" fill="#6b7280">• Issues &amp; PR management</text>
+
+  <text x="460" y="244" font-family="monospace" font-size="10" fill="#cbd5e1">Cache Service</text>
+  <text x="466" y="260" font-family="system-ui" font-size="10" fill="#6b7280">• localStorage with TTL</text>
+  <text x="466" y="276" font-family="system-ui" font-size="10" fill="#6b7280">• Auto-expiry &amp; cleanup</text>
+
+  <!-- Markdown lib -->
+  <rect x="440" y="310" width="200" height="100" rx="12" fill="#111118" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="540" y="338" font-family="system-ui" font-size="14" fill="#4ade80" font-weight="600" text-anchor="middle">Markdown Engine</text>
+  <text x="460" y="366" font-family="system-ui" font-size="10" fill="#6b7280">• Generate goal/req/plan MD</text>
+  <text x="460" y="384" font-family="system-ui" font-size="10" fill="#6b7280">• Parse task files + subtasks</text>
+  <text x="460" y="402" font-family="system-ui" font-size="10" fill="#6b7280">• Plan task extraction</text>
+
+  <!-- GitHub API -->
+  <rect x="700" y="110" width="220" height="300" rx="12" fill="#111118" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="810" y="138" font-family="system-ui" font-size="14" fill="#fb923c" font-weight="600" text-anchor="middle">GitHub (Source of Truth)</text>
+
+  <text x="720" y="168" font-family="system-ui" font-size="11" fill="#94a3b8" font-weight="500">Epic Repo (Private)</text>
+  <rect x="720" y="178" width="180" height="72" rx="6" fill="#1a1a24"/>
+  <text x="734" y="196" font-family="monospace" font-size="10" fill="#cbd5e1">/epics/auth-system/</text>
+  <text x="742" y="212" font-family="monospace" font-size="10" fill="#6b7280">goal.md</text>
+  <text x="742" y="226" font-family="monospace" font-size="10" fill="#6b7280">requirements.md</text>
+  <text x="742" y="240" font-family="monospace" font-size="10" fill="#6b7280">plan.md  tasks/</text>
+
+  <text x="720" y="272" font-family="system-ui" font-size="11" fill="#94a3b8" font-weight="500">Execution Artifacts</text>
+  <rect x="720" y="282" width="180" height="72" rx="6" fill="#1a1a24"/>
+  <text x="734" y="300" font-family="monospace" font-size="10" fill="#cbd5e1">GitHub Issues</text>
+  <text x="734" y="316" font-family="monospace" font-size="10" fill="#cbd5e1">Pull Requests</text>
+  <text x="734" y="332" font-family="monospace" font-size="10" fill="#cbd5e1">CI Checks &amp; Labels</text>
+  <text x="734" y="348" font-family="monospace" font-size="10" fill="#cbd5e1">Comments &amp; Reviews</text>
+
+  <!-- LocalStorage -->
+  <rect x="700" y="430" width="220" height="100" rx="12" fill="#111118" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="810" y="458" font-family="system-ui" font-size="14" fill="#94a3b8" font-weight="600" text-anchor="middle">localStorage (Cache)</text>
+  <text x="720" y="486" font-family="system-ui" font-size="10" fill="#6b7280">• PAT token (plain text)</text>
+  <text x="720" y="502" font-family="system-ui" font-size="10" fill="#6b7280">• API response cache (5m TTL)</text>
+  <text x="720" y="518" font-family="system-ui" font-size="10" fill="#6b7280">• UI preferences</text>
+
+  <!-- Arrows -->
+  <line x1="380" y1="200" x2="440" y2="200" stroke="#4f46e5" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="640" y1="200" x2="700" y2="200" stroke="#facc15" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="240" y1="290" x2="240" y2="310" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="540" y1="290" x2="540" y2="310" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="810" y1="410" x2="810" y2="430" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 2"/>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+</svg>
