@@ -32,7 +32,8 @@ src/
 │   ├── storage.ts       # localStorage wrapper (get/set/remove, PAT helpers)
 │   └── templates.ts     # Markdown rendering and parsing for epics/tasks
 └── test/                # Test infrastructure
-    └── setup.ts         # Vitest setup (@testing-library/jest-dom)
+    ├── setup.ts         # Vitest setup (@testing-library/jest-dom)
+    └── fixtures.ts      # Shared factory functions (createTask, createEpic, etc.)
 ```
 
 ## Where Things Live
@@ -58,10 +59,16 @@ src/
 
 ## Test Co-location
 
-Unit tests live alongside their source files:
+Unit tests live alongside their source files (81 tests across 8 files):
 - `components/auth/PatModal.test.tsx`
+- `components/epic/EpicDetail.test.tsx`
+- `components/repo/RepoSelector.test.tsx`
+- `hooks/useKeyboardShortcut.test.ts`
+- `services/github.test.ts`
 - `utils/slugify.test.ts`
 - `utils/storage.test.ts`
 - `utils/templates.test.ts`
+
+Shared test factories live in `test/fixtures.ts` (see [TESTING.md](../TESTING.md)).
 
 E2E tests live in `e2e/`.

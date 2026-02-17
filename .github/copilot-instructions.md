@@ -31,7 +31,7 @@ Run these commands before opening any PR:
 ```bash
 npm run build     # TypeScript compilation + Vite build
 npm run lint      # ESLint (flat config, TS + React rules)
-npm test          # Vitest unit tests (~50 tests, <5s)
+npm test          # Vitest unit tests (~81 tests, <5s)
 ```
 
 For UI changes that affect E2E flows:

@@ -24,7 +24,7 @@ All commands are run from the repository root:
 | Install deps | `npm ci` | Use `ci` for reproducible installs |
 | Dev server | `npm run dev` | Starts Vite dev server |
 | Build | `npm run build` | Runs `tsc -b && vite build` |
-| Unit tests | `npm test` | Vitest, ~50 tests, fast (<5s) |
+| Unit tests | `npm test` | Vitest, ~81 tests, fast (<5s) |
 | Unit tests (watch) | `npm run test:watch` | Vitest in watch mode |
 | E2E tests | `npm run build && npm run test:e2e` | Playwright; requires build first |
 | Lint | `npm run lint` | ESLint (flat config) |
@@ -43,8 +43,13 @@ npm run build && npm run lint && npm test
 /                         # Repo root
 ├── AGENTS.md             # This file — agent operating manual
 ├── README.md             # Project overview, screenshots, getting started
+├── TESTING.md            # Testing conventions, fixtures, best practices
 ├── LICENSE               # MIT
 ├── docs/images/          # Screenshots for README
+├── scripts/              # Azure provisioning scripts
+│   ├── provision-azure.sh      # Bash: create resource group + Static Web App
+│   ├── provision-azure.ps1     # PowerShell equivalent
+│   └── setup-service-principal.ps1  # OIDC service principal setup
 ├── package.json          # Dependencies & scripts
 ├── vite.config.ts        # Vite bundler config
 ├── vitest.config.ts      # Vitest test config (jsdom, setup file)
@@ -55,8 +60,18 @@ npm run build && npm run lint && npm test
 ├── playwright.config.ts  # E2E config (Chromium, localhost:4173)
 ├── index.html            # Entry HTML
 ├── public/               # Static assets
+├── .github/
+│   ├── copilot-instructions.md          # Copilot repo-wide guidance
+│   ├── dependabot.yml                   # Dependabot config (npm daily, actions weekly)
+│   └── workflows/
+│       ├── ci.yml                       # CI: build + unit tests + E2E tests
+│       ├── copilot-setup-steps.yml      # Copilot agent environment setup
+│       ├── deploy-pr.yml               # PR preview deploy to Azure Static Web Apps
+│       ├── deploy-production.yml        # Production deploy on push to main
+│       └── dependabot-auto-merge.yml    # Auto-merge passing Dependabot PRs
 ├── src/
 │   ├── main.tsx          # React entry point
+│   ├── README.md         # Source navigation guide
 │   ├── App.tsx           # Root component (PAT gate → repo selector → IDE layout)
 │   ├── App.css           # Global styles
 │   ├── components/       # React UI components, grouped by feature
@@ -68,7 +83,9 @@ npm run build && npm run lint && npm test
 │   ├── services/         # GitHub API client (Octokit wrapper)
 │   ├── types/            # TypeScript type definitions (epic.ts, github.ts)
 │   ├── utils/            # Utility functions (slugify, storage, templates)
-│   ├── test/             # Test setup (setup.ts imports @testing-library/jest-dom)
+│   ├── test/             # Test infrastructure
+│   │   ├── setup.ts      # Vitest setup (@testing-library/jest-dom)
+│   │   └── fixtures.ts   # Shared factory functions (createTask, createEpic, etc.)
 │   ├── index.css         # Base styles
 │   └── assets/           # Bundled assets
 └── e2e/                  # Playwright E2E tests
@@ -79,6 +96,16 @@ npm run build && npm run lint && npm test
 
 - `package-lock.json` — do not manually edit; run `npm install` to update
 - `docs/images/` — binary screenshots; do not regenerate without explicit request
+
+## CI/CD & Deployment
+
+- **Hosting**: Azure Static Web Apps (Free SKU)
+- **CI** (`ci.yml`): Runs build, unit tests, and E2E tests on every pull request
+- **PR Previews** (`deploy-pr.yml`): Deploys preview environments for non-Dependabot PRs; auto-cleaned on PR close
+- **Production** (`deploy-production.yml`): Tests then deploys to production on push to `main`
+- **Dependabot** (`dependabot.yml`): Daily npm dependency updates, weekly GitHub Actions updates
+- **Auto-merge** (`dependabot-auto-merge.yml`): Automatically squash-merges passing Dependabot PRs
+- **Provisioning**: `scripts/` contains Azure CLI and PowerShell scripts for initial infrastructure setup
 
 ## Guardrails & Safety
 
