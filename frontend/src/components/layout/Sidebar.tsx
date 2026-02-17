@@ -1,5 +1,5 @@
 import { FolderOpen, Plus, ChevronRight, Circle, CheckCircle, Clock, GitPullRequest } from 'lucide-react';
-import type { Epic } from '../types';
+import type { Epic } from '../../types';
 
 interface SidebarProps {
   epics: Epic[];

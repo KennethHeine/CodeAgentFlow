@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ExternalLink, FileText, Target, ClipboardList, ListChecks, CheckCircle, Circle, Clock, GitPullRequest, RefreshCw, FolderOpen } from 'lucide-react';
-import type { Epic } from '../types';
+import type { Epic } from '../../types';
 
 interface EpicDetailProps {
   epic: Epic | null;

@@ -1,6 +1,4 @@
-export { PatModal } from './PatModal';
-export { Header } from './Header';
-export { Sidebar } from './Sidebar';
-export { EpicWizard } from './EpicWizard';
-export { EpicDetail } from './EpicDetail';
-export { RepoSelector } from './RepoSelector';
+export { PatModal } from './auth';
+export { Header, Sidebar } from './layout';
+export { EpicWizard, EpicDetail } from './epic';
+export { RepoSelector } from './repo';
