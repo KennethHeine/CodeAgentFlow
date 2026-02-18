@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { KeyRound, ExternalLink, Eye, EyeOff, Shield, AlertCircle } from 'lucide-react';
+import { KeyRound, ExternalLink, Eye, EyeOff, Shield, AlertCircle, X } from 'lucide-react';
 
 interface PatModalProps {
   onSubmit: (pat: string) => void;
   error: string | null;
   loading: boolean;
+  onClose?: () => void;
 }
 
-export function PatModal({ onSubmit, error, loading }: PatModalProps) {
+export function PatModal({ onSubmit, error, loading, onClose }: PatModalProps) {
   const [pat, setPat] = useState('');
   const [showToken, setShowToken] = useState(false);
 
@@ -26,6 +27,16 @@ export function PatModal({ onSubmit, error, loading }: PatModalProps) {
         aria-modal="true"
         aria-labelledby="pat-modal-title"
       >
+        {onClose && (
+          <button
+            className="pat-modal-close"
+            onClick={onClose}
+            aria-label="Close"
+            data-testid="pat-modal-close"
+          >
+            <X size={18} />
+          </button>
+        )}
         <div className="pat-modal-header">
           <div className="pat-modal-icon">
             <KeyRound size={32} />

@@ -54,7 +54,7 @@ npm run dev
 ## Testing
 
 ```bash
-# Unit tests (Vitest — 81 tests across 8 files)
+# Unit tests (Vitest — 84 tests across 8 files)
 npm test
 
 # E2E tests (Playwright — Chromium)
