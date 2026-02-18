@@ -1,4 +1,4 @@
-import { GitBranch, ExternalLink, LogOut, Settings } from 'lucide-react';
+import { GitBranch, ExternalLink, LogOut, Settings, KeyRound } from 'lucide-react';
 import type { GitHubUser } from '../../types';
 
 interface HeaderProps {
@@ -6,9 +6,10 @@ interface HeaderProps {
   epicRepo: string | null;
   onLogout: () => void;
   onSettingsClick: () => void;
+  onSignIn?: () => void;
 }
 
-export function Header({ user, epicRepo, onLogout, onSettingsClick }: HeaderProps) {
+export function Header({ user, epicRepo, onLogout, onSettingsClick, onSignIn }: HeaderProps) {
   return (
     <header className="app-header">
       <div className="header-left">
@@ -31,7 +32,7 @@ export function Header({ user, epicRepo, onLogout, onSettingsClick }: HeaderProp
         )}
       </div>
       <div className="header-right">
-        {user && (
+        {user ? (
           <div className="header-user">
             <img src={user.avatar_url} alt={user.login} className="header-avatar" />
             <a
@@ -59,6 +60,15 @@ export function Header({ user, epicRepo, onLogout, onSettingsClick }: HeaderProp
               <LogOut size={16} />
             </button>
           </div>
+        ) : (
+          <button
+            className="header-sign-in-btn"
+            onClick={onSignIn}
+            data-testid="header-sign-in"
+          >
+            <KeyRound size={14} />
+            Sign in with GitHub
+          </button>
         )}
       </div>
     </header>
