@@ -24,7 +24,7 @@ All commands are run from the repository root:
 | Install deps | `npm ci` | Use `ci` for reproducible installs |
 | Dev server | `npm run dev` | Starts Vite dev server |
 | Build | `npm run build` | Runs `tsc -b && vite build` |
-| Unit tests | `npm test` | Vitest, ~81 tests, fast (<5s) |
+| Unit tests | `npm test` | Vitest, ~84 tests, fast (<5s) |
 | Unit tests (watch) | `npm run test:watch` | Vitest in watch mode |
 | E2E tests | `npm run build && npm run test:e2e` | Playwright; requires build first |
 | Lint | `npm run lint` | ESLint (flat config) |
