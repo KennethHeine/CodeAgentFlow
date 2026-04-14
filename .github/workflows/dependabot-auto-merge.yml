@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Get PR info from workflow run
         id: pr-info
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             // Get the PR associated with the workflow run
