@@ -195,6 +195,22 @@ kbd {
   color: var(--text-primary);
 }
 
+.header-sign-in-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+.header-sign-in-btn:hover {
+  background: var(--accent-hover);
+}
+
 /* ===== Sidebar ===== */
 .app-sidebar {
   width: var(--sidebar-width);
@@ -364,6 +380,25 @@ kbd {
   border-radius: var(--radius-lg);
   padding: 32px;
   box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.pat-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.pat-modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .pat-modal-header {

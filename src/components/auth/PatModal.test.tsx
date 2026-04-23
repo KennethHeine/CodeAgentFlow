@@ -77,4 +77,22 @@ describe('PatModal', () => {
     const link = screen.getByText('Create a new token on GitHub');
     expect(link).toHaveAttribute('href', expect.stringContaining('github.com/settings/tokens'));
   });
+
+  it('renders close button when onClose is provided', () => {
+    render(<PatModal onSubmit={vi.fn()} error={null} loading={false} onClose={vi.fn()} />);
+    expect(screen.getByTestId('pat-modal-close')).toBeInTheDocument();
+  });
+
+  it('does not render close button when onClose is not provided', () => {
+    render(<PatModal onSubmit={vi.fn()} error={null} loading={false} />);
+    expect(screen.queryByTestId('pat-modal-close')).not.toBeInTheDocument();
+  });
+
+  it('calls onClose when close button is clicked', async () => {
+    const onClose = vi.fn();
+    const user = userEvent.setup();
+    render(<PatModal onSubmit={vi.fn()} error={null} loading={false} onClose={onClose} />);
+    await user.click(screen.getByTestId('pat-modal-close'));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

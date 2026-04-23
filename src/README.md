@@ -59,7 +59,7 @@ src/
 
 ## Test Co-location
 
-Unit tests live alongside their source files (81 tests across 8 files):
+Unit tests live alongside their source files (84 tests across 8 files):
 - `components/auth/PatModal.test.tsx`
 - `components/epic/EpicDetail.test.tsx`
 - `components/repo/RepoSelector.test.tsx`
