@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { PatModal, Header, Sidebar, EpicWizard, EpicDetail, RepoSelector } from './components';
 import { useAuth, useEpics, useKeyboardShortcut } from './hooks';
 import { listRepos } from './services/github';
@@ -16,6 +16,7 @@ function App() {
   });
 
   // UI state
+  const [showPatModal, setShowPatModal] = useState(false);
   const [showRepoSelector, setShowRepoSelector] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
@@ -49,6 +50,10 @@ function App() {
   }, []);
 
   const handleOpenRepoSelector = useCallback(async () => {
+    if (!isAuthenticated) {
+      setShowPatModal(true);
+      return;
+    }
     setShowRepoSelector(true);
     setReposLoading(true);
     try {
@@ -60,7 +65,7 @@ function App() {
     } finally {
       setReposLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const handleSelectEpic = useCallback(async (slug: string) => {
     setSelectedEpicSlug(slug);
@@ -89,12 +94,18 @@ function App() {
     handleSelectEpic(slug);
   }, [createEpic, loadEpics, handleSelectEpic]);
 
-  // PAT gate
-  if (!isAuthenticated) {
-    return <PatModal onSubmit={authenticate} error={authError} loading={authLoading} />;
-  }
+  const handleAuthenticate = useCallback(async (token: string) => {
+    await authenticate(token);
+  }, [authenticate]);
 
-  // Repo selection gate
+  // Close PAT modal when authentication succeeds
+  useEffect(() => {
+    if (isAuthenticated) {
+      setShowPatModal(false);
+    }
+  }, [isAuthenticated]);
+
+  // Repo selection gate (shown for both authenticated and unauthenticated users)
   if (!epicRepo) {
     return (
       <div className="app-container">
@@ -103,6 +114,7 @@ function App() {
           epicRepo={null}
           onLogout={logout}
           onSettingsClick={handleOpenRepoSelector}
+          onSignIn={() => setShowPatModal(true)}
         />
         <div className="repo-selection-prompt">
           <h2>Select your Epic Repository</h2>
@@ -119,6 +131,14 @@ function App() {
             />
           )}
         </div>
+        {showPatModal && (
+          <PatModal
+            onSubmit={handleAuthenticate}
+            error={authError}
+            loading={authLoading}
+            onClose={() => setShowPatModal(false)}
+          />
+        )}
       </div>
     );
   }
@@ -130,6 +150,7 @@ function App() {
         epicRepo={epicRepo.full_name}
         onLogout={logout}
         onSettingsClick={handleOpenRepoSelector}
+        onSignIn={() => setShowPatModal(true)}
       />
       <div className="app-body">
         <Sidebar
@@ -162,6 +183,15 @@ function App() {
           loading={reposLoading}
           onSelect={handleSelectRepo}
           onClose={() => setShowRepoSelector(false)}
+        />
+      )}
+
+      {showPatModal && (
+        <PatModal
+          onSubmit={handleAuthenticate}
+          error={authError}
+          loading={authLoading}
+          onClose={() => setShowPatModal(false)}
         />
       )}
     </div>
